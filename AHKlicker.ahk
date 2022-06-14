@@ -12,7 +12,7 @@ global resources := A_WorkingDir "\resources"
 ShowMainGui()
 return
 
-; METHODS
+; FUNCTIONS
 ; Show main GUI
 ShowMainGui(){
     ; Creating main GUI
