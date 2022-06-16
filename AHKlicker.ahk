@@ -24,7 +24,7 @@ ShowMainGui(){
     Menu, FileMenu, Add, Stop`tAltGr+S, Stop
     Menu, FileMenu, Add, Exit, Exit
 
-    Menu, MainMenuBar, Add, Files, :FileMenu
+    Menu, MainMenuBar, Add, File, :FileMenu
 
     ; "Actions" menu
 
@@ -49,14 +49,15 @@ ShowMainGui(){
     Menu MainMenuBar, Add, Add Action, :ActionsMenu
 
     ; "Configuration" menu
-    Menu ConfigMenu, Add, Load, LoadConfigAction
+    Menu ConfigMenu, Add, Load..., LoadConfigAction
     Menu, ConfigMenu, Add, Save, SaveConfigAction
     Menu, ConfigMenu, Add, Clean, CleanConfigAction
 
     Menu, MainMenuBar, Add, Configuration, :ConfigMenu
 
-    ; "About" menu
-    Menu, MainMenuBar, Add, About, AboutAction
+    ; "Help" menu
+    Menu, HelpMenu, Add, About, AboutAction
+    Menu, MainMenuBar, Add, Help, :HelpMenu
 
     ; Adding main menu bar to the GUI
     Gui, Menu, MainMenuBar
@@ -70,15 +71,16 @@ mainGuiClose(){
 }
 
 ; About menu functions
+global copyRepositoryButton
 AboutAction(){
     Gui, about:New
     Gui, -Caption +ToolWindow +Border +AlwaysOnTop
     Gui, Font, s12
 	Gui, Color, e9e9e9
-    Gui, Add, Text, x4 y4, AHKlicker 0.0.1
+    Gui, Add, Text, x4 y4, AHKlicker 0.0.1-alpha
     Gui, Font, c0000FF underline
 	Gui, Add, Text, x4 y36 gGoRepository, https://github.com/FyeCobain/AHKlicker.git
-    Gui, Add, Picture, x315 y34 w30 h30 Icon135 gCopyRepository, Shell32.dll
+    Gui, Add, Picture, x312 y32 w30 h30 Icon135 gCopyRepository vcopyRepositoryButton, Shell32.dll
     Gui, Font, s12 norm
     Gui, Add, Button, w80 x135 y70 gAboutOK, OK
     Gui, Show, w350 h120
@@ -89,9 +91,7 @@ GoRepository(){
 }
 CopyRepository(){
     Clipboard := "https://github.com/FyeCobain/AHKlicker.git"
-    ToolTip, Copied
-    Sleep, 750
-    Tooltip
+    GuiControl, , copyRepositoryButton, *icon303 Shell32.dll
 }
 AboutOK(){
     Gui, about:Destroy
