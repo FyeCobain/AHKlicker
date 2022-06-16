@@ -46,7 +46,7 @@ ShowMainGui(){
     Menu, ActionsMenu, Add, Wait, WaitAction
     Menu, ActionsMenu, Add, Repeat, RepeatAction
 
-    Menu MainMenuBar, Add, Actions, :ActionsMenu
+    Menu MainMenuBar, Add, Add Action, :ActionsMenu
 
     ; "Configuration" menu
     Menu ConfigMenu, Add, Load, LoadConfigAction
@@ -67,6 +67,34 @@ ShowMainGui(){
 }
 mainGuiClose(){
     ExitApp
+}
+
+; About menu functions
+AboutAction(){
+    Gui, about:New
+    Gui, -Caption +ToolWindow +Border +AlwaysOnTop
+    Gui, Font, s12
+	Gui, Color, e9e9e9
+    Gui, Add, Text, x4 y4, AHKlicker 0.0.1
+    Gui, Font, c0000FF underline
+	Gui, Add, Text, x4 y36 gGoRepository, https://github.com/FyeCobain/AHKlicker.git
+    Gui, Add, Picture, x315 y34 w30 h30 Icon135 gCopyRepository, Shell32.dll
+    Gui, Font, s12 norm
+    Gui, Add, Button, w80 x135 y70 gAboutOK, OK
+    Gui, Show, w350 h120
+}
+GoRepository(){
+    Run, https://github.com/FyeCobain/AHKlicker.git
+    AboutOK()
+}
+CopyRepository(){
+    Clipboard := "https://github.com/FyeCobain/AHKlicker.git"
+    ToolTip, Copied
+    Sleep, 750
+    Tooltip
+}
+AboutOK(){
+    Gui, about:Destroy
 }
 
 ; File menu functions
@@ -135,10 +163,5 @@ SaveConfigAction(){
 }
 
 CleanConfigAction(){
-
-}
-
-; About menu functions
-AboutAction(){
 
 }

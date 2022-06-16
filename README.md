@@ -1,6 +1,6 @@
 # `AHKlicker`
 
-Auto clicker for Windows with _click-on-color_, loops, hotkeys and many more functions. Created with AutoHotkey.
+Auto clicker for Windows with _click-on-color_, loops, hotkeys and many more options. Created with AutoHotkey.
 
 ### Attributions
 
