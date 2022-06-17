@@ -6,9 +6,9 @@ Menu, Tray, Tip, AHKlicker
 Menu, Tray, Icon, %A_WorkingDir%\resources\icon.ico, 1, 1
 
 ; GLOBAL VARIABLES
-global resources := A_WorkingDir "\resources"
-global language := GetValue("config", "GENERAL", "language")
-global profile := GetValue("config", "GENERAL", "profile")
+global resourcesPath := A_WorkingDir "\resources"
+global language := Get("config", "GENERAL", "language")
+global profile := Get("config", "GENERAL", "profile")
 
 ; AUTO-EXECUTE SECTION
 ShowMainGui()
@@ -16,75 +16,74 @@ return
 
 ; FUNCTIONS
 
-; Get and return a value from a .ini file
-GetValue(fileName, section, key){
-    IniRead, value, %resources%\%fileName%.ini, %section%, %key%
+; Gets and returns a value from a .ini file
+Get(fileName, section, key){
+    IniRead, value, %resourcesPath%\%fileName%.ini, %section%, %key%
     return value
 }
 
-; Show main GUI
+; Shows the main GUI
 ShowMainGui(){
     ; Creating main GUI
     Gui, main:New
 
     ; "File" menu
-    Menu, FileMenu, Add, Start          AltGr+I, Start
-    Menu, FileMenu, Add, Pause        AltGr+P, Pause
-    Menu, FileMenu, Add, Stop          AltGr+S, Stop
-    Menu, FileMenu, Add, Exit            AltGr+X, Exit
+    Menu, FileMenu, Add, % Get(language, "FileMenu", "Start"), Start
+    Menu, FileMenu, Add,% Get(language, "FileMenu", "Pause"), Pause
+    Menu, FileMenu, Add, % Get(language, "FileMenu", "Stop"), Stop
+    Menu, FileMenu, Add, % Get(language, "FileMenu", "Reset"), Stop
+    Menu, FileMenu, Add, % Get(language, "FileMenu", "Exit"), Exit
+    Menu, MainMenuBar, Add, % Get(language, "FileMenu", "File"), :FileMenu
 
-    Menu, MainMenuBar, Add, File, :FileMenu
-
-    ; "Actions" menu
+    ; "Add Action" menu
 
     ; "Mouse" sub-menu
-    Menu, MouseSubMenu, Add, Right Click, RightClickAction
-    Menu, MouseSubMenu, Add, Right Button Drag, RightDragAction
-    Menu, MouseSubMenu, Add, Left Click, LeftClickAction
-    Menu, MouseSubMenu, Add, Left Button Drag, LeftDragAction
-    Menu, MouseSubMenu, Add, Middle Button, MiddleClickAction
-    Menu, MouseSubMenu, Add, Middle Button Drag, MiddleDragAction
-    Menu, MouseSubMenu, Add, Click on color, ClickOnColorAction
-    Menu, ActionsMenu, Add, Mouse, :MouseSubMenu
+    Menu, MouseSubMenu, Add, % Get(language, "Actions", "RightClick"), RightClickAction
+    Menu, MouseSubMenu, Add, % Get(language, "Actions", "RightDrag"), RightDragAction
+    Menu, MouseSubMenu, Add, % Get(language, "Actions", "LeftClick"), LeftClickAction
+    Menu, MouseSubMenu, Add, % Get(language, "Actions", "LeftDrag"), LeftDragAction
+    Menu, MouseSubMenu, Add, % Get(language, "Actions", "MiddleClick"), MiddleClickAction
+    Menu, MouseSubMenu, Add, % Get(language, "Actions", "MiddleDrag"), MiddleDragAction
+    Menu, MouseSubMenu, Add, % Get(language, "Actions", "ClickOnColor"), ClickOnColorAction
+    Menu, ActionsMenu, Add, % Get(language, "Actions", "Mouse"), :MouseSubMenu
 
     ; "Keyboard" sub-menu
-    Menu, KeyboardSubMenu, Add, Write text, WriteTextAction
-    Menu, KeyboardSubMenu, Add, Press Key, PressKeyAction
-    Menu, KeyboardSubMenu, Add, Send command, SendCommandAction
-    Menu, ActionsMenu, Add, Keyboard, :KeyboardSubMenu
+    Menu, KeyboardSubMenu, Add, % Get(language, "Actions", "Write"), WriteTextAction
+    Menu, KeyboardSubMenu, Add, % Get(language, "Actions", "PressKey"), PressKeyAction
+    Menu, KeyboardSubMenu, Add, % Get(language, "Actions", "SendCommand"), SendCommandAction
+    Menu, ActionsMenu, Add, % Get(language, "Actions", "Keyboard"), :KeyboardSubMenu
 
     ; Other actions
-    Menu, ActionsMenu, Add, Wait, WaitAction
-    Menu, ActionsMenu, Add, Wait Color, WaitAction
-    Menu, ActionsMenu, Add, Wait Image, WaitAction
-    Menu, ActionsMenu, Add, Repeat, RepeatAction
+    Menu, ActionsMenu, Add, % Get(language, "Actions", "Wait") , WaitAction
+    Menu, ActionsMenu, Add, % Get(language, "Actions", "WaitColor"), WaitAction
+    Menu, ActionsMenu, Add, % Get(language, "Actions", "WaitImage"), WaitAction
+    Menu, ActionsMenu, Add, % Get(language, "Actions", "Repeat"), RepeatAction
 
-    Menu MainMenuBar, Add, Add Action, :ActionsMenu
+    Menu MainMenuBar, Add, % Get(language, "Actions", "AddAction"), :ActionsMenu
 
     ; "Profile" menu
-    Menu ProfileMenu, Add, Load..., LoadConfigAction
-    Menu, ProfileMenu, Add, Save, SaveConfigAction
-    Menu, ProfileMenu, Add, Clean, CleanConfigAction
+    Menu ProfileMenu, Add, % Get(language, "Profile", "Load"), LoadConfigAction
+    Menu, ProfileMenu, Add, % Get(language, "Profile", "Save"), SaveConfigAction
+    Menu, ProfileMenu, Add, % Get(language, "Profile", "Clear"), CleanConfigAction
 
-    Menu, MainMenuBar, Add, Profile, :ProfileMenu
+    Menu, MainMenuBar, Add, % Get(language, "Profile", "Profile"), :ProfileMenu
 
     ; "Configuration" menu
-    Menu, LangaugeMenu, Add, English, LoadConfigAction
-    Menu, LangaugeMenu, Check, English
-    Menu, LangaugeMenu, Add, Spanish, LoadConfigAction
-    Menu, ConfigMenu, Add, Langauge, :LangaugeMenu
+    Menu, LangaugeMenu, Add, % Get(language, "Configuration", "en") , LoadConfigAction
+    Menu, LangaugeMenu, Add, % Get(language, "Configuration", "es") , LoadConfigAction
+    Menu, LangaugeMenu, Check, % Get(language, "Configuration", language)
+    Menu, ConfigMenu, Add, % Get(language, "Configuration", "Language"), :LangaugeMenu
 
-    Menu, MainMenuBar, Add, Configuration, :ConfigMenu
+    Menu, MainMenuBar, Add, % Get(language, "Configuration", "Configuration"), :ConfigMenu
 
     ; "Help" menu
-    Menu, HelpMenu, Add, About, AboutAction
-    Menu, MainMenuBar, Add, Help, :HelpMenu
+    Menu, HelpMenu, Add, % Get(language, "HelpMenu", "About"), AboutAction
+    Menu, MainMenuBar, Add, % Get(language, "HelpMenu", "Help"), :HelpMenu
 
     ; Adding main menu bar to the GUI
     Gui, Menu, MainMenuBar
 
     Gui, +resize
-    Gui, Add, Text, , Hello World!
     Gui, Show, w500 h200
 }
 mainGuiClose(){
@@ -103,7 +102,7 @@ AboutAction(){
 	Gui, Add, Text, x4 y36 gGoRepository, https://github.com/FyeCobain/AHKlicker.git
     Gui, Add, Picture, x312 y32 w30 h30 Icon135 gCopyRepository vcopyRepositoryButton, Shell32.dll
     Gui, Font, s12 norm
-    Gui, Add, Button, w80 x135 y70 gAboutOK, OK
+    Gui, Add, Button, w80 x135 y70 gAboutOK, % Get(language, "Dialogs", "OK")
     Gui, Show, w350 h120
 }
 GoRepository(){
