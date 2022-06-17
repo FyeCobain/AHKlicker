@@ -30,9 +30,11 @@ ShowMainGui(){
 
     ; "Mouse" sub-menu
     Menu, MouseSubMenu, Add, Right Click, RightClickAction
+    Menu, MouseSubMenu, Add, Right Button Drag, RightDragAction
     Menu, MouseSubMenu, Add, Left Click, LeftClickAction
+    Menu, MouseSubMenu, Add, Left Button Drag, LeftDragAction
     Menu, MouseSubMenu, Add, Middle Button, MiddleClickAction
-    Menu, MouseSubMenu, Add, Drag, DragAction
+    Menu, MouseSubMenu, Add, Middle Button Drag, MiddleDragAction
     Menu, MouseSubMenu, Add, Click on color, ClickOnColorAction
     Menu, ActionsMenu, Add, Mouse, :MouseSubMenu
 
@@ -120,13 +122,19 @@ MouseActions(){
 LeftClickAction(){
 
 }
+LeftDragAction(){
+
+}
 RightClickAction(){
+
+}
+RightDragAction(){
 
 }
 MiddleClickAction(){
 
 }
-DragAction(){
+MiddleDragAction(){
 
 }
 ClickOnColorAction(){
