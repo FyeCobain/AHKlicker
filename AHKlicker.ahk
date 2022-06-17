@@ -51,6 +51,13 @@ ShowMainGui(){
     Menu MainMenuBar, Add, Add Action, :ActionsMenu
 
     ; "Configuration" menu
+    
+    ; "Language" sub-menu
+    Menu, LangaugeMenu, Add, English, LoadConfigAction
+    Menu, LangaugeMenu, Check, English
+    Menu, LangaugeMenu, Add, Spanish, LoadConfigAction
+    Menu, ConfigMenu, Add, Langauge, :LangaugeMenu
+
     Menu ConfigMenu, Add, Load..., LoadConfigAction
     Menu, ConfigMenu, Add, Save, SaveConfigAction
     Menu, ConfigMenu, Add, Clean, CleanConfigAction
