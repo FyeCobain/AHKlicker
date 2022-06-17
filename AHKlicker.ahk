@@ -7,22 +7,31 @@ Menu, Tray, Icon, %A_WorkingDir%\resources\icon.ico, 1, 1
 
 ; GLOBAL VARIABLES
 global resources := A_WorkingDir "\resources"
+global language := GetValue("config", "GENERAL", "language")
+global profile := GetValue("config", "GENERAL", "profile")
 
 ; AUTO-EXECUTE SECTION
 ShowMainGui()
 return
 
 ; FUNCTIONS
+
+; Get and return a value from a .ini file
+GetValue(fileName, section, key){
+    IniRead, value, %resources%\%fileName%.ini, %section%, %key%
+    return value
+}
+
 ; Show main GUI
 ShowMainGui(){
     ; Creating main GUI
     Gui, main:New
 
     ; "File" menu
-    Menu, FileMenu, Add, Start`tAltGr+I, Start
-    Menu, FileMenu, Add, Pause`tAltGr+P, Pause
-    Menu, FileMenu, Add, Stop`tAltGr+S, Stop
-    Menu, FileMenu, Add, Exit, Exit
+    Menu, FileMenu, Add, Start          AltGr+I, Start
+    Menu, FileMenu, Add, Pause        AltGr+P, Pause
+    Menu, FileMenu, Add, Stop          AltGr+S, Stop
+    Menu, FileMenu, Add, Exit            AltGr+X, Exit
 
     Menu, MainMenuBar, Add, File, :FileMenu
 
@@ -46,21 +55,24 @@ ShowMainGui(){
 
     ; Other actions
     Menu, ActionsMenu, Add, Wait, WaitAction
+    Menu, ActionsMenu, Add, Wait Color, WaitAction
+    Menu, ActionsMenu, Add, Wait Image, WaitAction
     Menu, ActionsMenu, Add, Repeat, RepeatAction
 
     Menu MainMenuBar, Add, Add Action, :ActionsMenu
 
+    ; "Profile" menu
+    Menu ProfileMenu, Add, Load..., LoadConfigAction
+    Menu, ProfileMenu, Add, Save, SaveConfigAction
+    Menu, ProfileMenu, Add, Clean, CleanConfigAction
+
+    Menu, MainMenuBar, Add, Profile, :ProfileMenu
+
     ; "Configuration" menu
-    
-    ; "Language" sub-menu
     Menu, LangaugeMenu, Add, English, LoadConfigAction
     Menu, LangaugeMenu, Check, English
     Menu, LangaugeMenu, Add, Spanish, LoadConfigAction
     Menu, ConfigMenu, Add, Langauge, :LangaugeMenu
-
-    Menu ConfigMenu, Add, Load..., LoadConfigAction
-    Menu, ConfigMenu, Add, Save, SaveConfigAction
-    Menu, ConfigMenu, Add, Clean, CleanConfigAction
 
     Menu, MainMenuBar, Add, Configuration, :ConfigMenu
 
