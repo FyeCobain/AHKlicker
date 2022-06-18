@@ -3,12 +3,12 @@
 SendMode, Input
 SetWorkingDir, %A_ScriptDir%
 Menu, Tray, Tip, AHKlicker
-Menu, Tray, Icon, %A_WorkingDir%\resources\icon.ico, 1, 1
+Menu, Tray, Icon, %A_WorkingDir%\resources\images\icon.ico, 1, 1
 
 ; GLOBAL VARIABLES
 global resourcesPath := A_WorkingDir "\resources"
-global language := Get("config", "GENERAL", "language")
-global profile := Get("config", "GENERAL", "profile")
+global language := GetConfig("GENERAL", "language")
+global profile := GetConfig("GENERAL", "profile")
 
 ; AUTO-EXECUTE SECTION
 ShowMainGui()
@@ -16,9 +16,20 @@ return
 
 ; FUNCTIONS
 
-; Gets and returns a value from a .ini file
-Get(fileName, section, key){
-    IniRead, value, %resourcesPath%\%fileName%.ini, %section%, %key%
+; Gets and returns a value from the config.ini file
+GetConfig(section, key){
+    IniRead, value, %resourcesPath%\config.ini, %section%, %key%, [{%key%}]
+    return value
+}
+
+; Sets a value to the config.ini file
+SetConfig(section, key, value){
+    IniWrite, %value%,  %resourcesPath%\config.ini, %section%, %key%
+}
+
+; Gets and returns a value from the current language file
+Get(section, key){
+    IniRead, value, %resourcesPath%\languages\%language%.ini, %section%, %key%, [{%key%}]
     return value
 }
 
@@ -28,61 +39,64 @@ ShowMainGui(){
     Gui, main:New
 
     ; "File" menu
-    Menu, FileMenu, Add, % Get(language, "FileMenu", "Start"), Start
-    Menu, FileMenu, Add,% Get(language, "FileMenu", "Pause"), Pause
-    Menu, FileMenu, Add, % Get(language, "FileMenu", "Stop"), Stop
-    Menu, FileMenu, Add, % Get(language, "FileMenu", "Reset"), Stop
-    Menu, FileMenu, Add, % Get(language, "FileMenu", "Exit"), Exit
-    Menu, MainMenuBar, Add, % Get(language, "FileMenu", "File"), :FileMenu
+    Menu, FileMenu, Add, % Get("FileMenu", "Start"), Start
+    Menu, FileMenu, Add, % Get("FileMenu", "Pause"), Pause
+    Menu, FileMenu, Add, % Get("FileMenu", "Stop"), Stop
+    Menu, FileMenu, Add, % Get("FileMenu", "Restart"), Stop
+    Menu, FileMenu, Add
+    Menu, FileMenu, Add, % Get("FileMenu", "Exit"), Exit
+    Menu, MainMenuBar, Add, % Get("FileMenu", "File"), :FileMenu
 
     ; "Add Action" menu
 
     ; "Mouse" sub-menu
-    Menu, MouseSubMenu, Add, % Get(language, "Actions", "RightClick"), RightClickAction
-    Menu, MouseSubMenu, Add, % Get(language, "Actions", "RightDrag"), RightDragAction
-    Menu, MouseSubMenu, Add, % Get(language, "Actions", "LeftClick"), LeftClickAction
-    Menu, MouseSubMenu, Add, % Get(language, "Actions", "LeftDrag"), LeftDragAction
-    Menu, MouseSubMenu, Add, % Get(language, "Actions", "MiddleClick"), MiddleClickAction
-    Menu, MouseSubMenu, Add, % Get(language, "Actions", "MiddleDrag"), MiddleDragAction
-    Menu, MouseSubMenu, Add, % Get(language, "Actions", "ClickOnColor"), ClickOnColorAction
-    Menu, ActionsMenu, Add, % Get(language, "Actions", "Mouse"), :MouseSubMenu
+    Menu, MouseSubMenu, Add, % Get("Actions", "RightClick"), RightClickAction
+    Menu, MouseSubMenu, Add, % Get("Actions", "RightDrag"), RightDragAction
+    Menu, MouseSubMenu, Add, % Get("Actions", "LeftClick"), LeftClickAction
+    Menu, MouseSubMenu, Add, % Get("Actions", "LeftDrag"), LeftDragAction
+    Menu, MouseSubMenu, Add, % Get("Actions", "MiddleClick"), MiddleClickAction
+    Menu, MouseSubMenu, Add, % Get("Actions", "MiddleDrag"), MiddleDragAction
+    Menu, MouseSubMenu, Add, % Get("Actions", "ClickOnColor"), ClickOnColorAction
+    Menu, ActionsMenu, Add, % Get("Actions", "Mouse"), :MouseSubMenu
 
     ; "Keyboard" sub-menu
-    Menu, KeyboardSubMenu, Add, % Get(language, "Actions", "Write"), WriteTextAction
-    Menu, KeyboardSubMenu, Add, % Get(language, "Actions", "PressKey"), PressKeyAction
-    Menu, KeyboardSubMenu, Add, % Get(language, "Actions", "SendCommand"), SendCommandAction
-    Menu, ActionsMenu, Add, % Get(language, "Actions", "Keyboard"), :KeyboardSubMenu
+    Menu, KeyboardSubMenu, Add, % Get("Actions", "Write"), WriteAction
+    Menu, KeyboardSubMenu, Add, % Get("Actions", "PressKey"), PressKeyAction
+    Menu, KeyboardSubMenu, Add, % Get("Actions", "SendCommand"), SendCommandAction
+    Menu, ActionsMenu, Add, % Get("Actions", "Keyboard"), :KeyboardSubMenu
 
-    ; Other actions
-    Menu, ActionsMenu, Add, % Get(language, "Actions", "Wait") , WaitAction
-    Menu, ActionsMenu, Add, % Get(language, "Actions", "WaitColor"), WaitAction
-    Menu, ActionsMenu, Add, % Get(language, "Actions", "WaitImage"), WaitAction
-    Menu, ActionsMenu, Add, % Get(language, "Actions", "Repeat"), RepeatAction
+    ; "Wait" sub-menu
+    Menu, WaitMenu, Add, % Get("Actions", "Sleep") , SleepAction
+    Menu, WaitMenu, Add, % Get("Actions", "WaitColor"), WaitColorAction
+    Menu, WaitMenu, Add, % Get("Actions", "WaitImage"), WaitImageAction
+    Menu, ActionsMenu, Add, % Get("Actions", "Wait"), :WaitMenu
 
-    Menu MainMenuBar, Add, % Get(language, "Actions", "AddAction"), :ActionsMenu
+    Menu, ActionsMenu, Add, % Get("Actions", "Repeat"), RepeatAction
+    Menu, MainMenuBar, Add, % Get("Actions", "AddAction"), :ActionsMenu
 
     ; "Profile" menu
-    Menu ProfileMenu, Add, % Get(language, "Profile", "Load"), LoadConfigAction
-    Menu, ProfileMenu, Add, % Get(language, "Profile", "Save"), SaveConfigAction
-    Menu, ProfileMenu, Add, % Get(language, "Profile", "Clear"), CleanConfigAction
+    Menu, ProfileMenu, Add, % Get("Profile", "Load"), LoadProfileAction
+    Menu, ProfileMenu, Add, % Get("Profile", "Save"), SaveProfileAction
+    Menu, ProfileMenu, Add, % Get("Profile", "Clear"), CleanProfileAction
 
-    Menu, MainMenuBar, Add, % Get(language, "Profile", "Profile"), :ProfileMenu
+    Menu, MainMenuBar, Add, % Get("Profile", "Profile"), :ProfileMenu
 
     ; "Configuration" menu
-    Menu, LangaugeMenu, Add, % Get(language, "Configuration", "en") , LoadConfigAction
-    Menu, LangaugeMenu, Add, % Get(language, "Configuration", "es") , LoadConfigAction
-    Menu, LangaugeMenu, Check, % Get(language, "Configuration", language)
-    Menu, ConfigMenu, Add, % Get(language, "Configuration", "Language"), :LangaugeMenu
+    Menu, LangaugeMenu, Add, % Get("Languages", "en"), SetEnglishAction
+    Menu, LangaugeMenu, Add, % Get("Languages", "spa"), SetSpanishAction
+    Menu, LangaugeMenu, Check, % Get("Languages", language)
+    Menu, ConfigMenu, Add, % Get("Languages", "Language"), :LangaugeMenu
 
-    Menu, MainMenuBar, Add, % Get(language, "Configuration", "Configuration"), :ConfigMenu
+    Menu, MainMenuBar, Add, % Get("Configuration", "Configuration"), :ConfigMenu
 
     ; "Help" menu
-    Menu, HelpMenu, Add, % Get(language, "HelpMenu", "About"), AboutAction
-    Menu, MainMenuBar, Add, % Get(language, "HelpMenu", "Help"), :HelpMenu
+    Menu, HelpMenu, Add, % Get("HelpMenu", "About"), AboutAction
+    Menu, MainMenuBar, Add, % Get("HelpMenu", "Help"), :HelpMenu
 
     ; Adding main menu bar to the GUI
     Gui, Menu, MainMenuBar
 
+    ; Showing main GUI
     Gui, +resize
     Gui, Show, w500 h200
 }
@@ -102,7 +116,7 @@ AboutAction(){
 	Gui, Add, Text, x4 y36 gGoRepository, https://github.com/FyeCobain/AHKlicker.git
     Gui, Add, Picture, x312 y32 w30 h30 Icon135 gCopyRepository vcopyRepositoryButton, Shell32.dll
     Gui, Font, s12 norm
-    Gui, Add, Button, w80 x135 y70 gAboutOK, % Get(language, "Dialogs", "OK")
+    Gui, Add, Button, w80 x135 y70 gAboutOK, % Get("Dialogs", "OK")
     Gui, Show, w350 h120
 }
 GoRepository(){
@@ -125,6 +139,9 @@ Pause(){
     ExitApp
 }
 Stop(){
+    ExitApp
+}
+Restart(){
     ExitApp
 }
 Exit(){
@@ -159,8 +176,8 @@ ClickOnColorAction(){
 
 }
 
-;Keyboard actions sub-menu
-WriteTextAction(){
+; Keyboard actions sub-menu
+WriteAction(){
 
 }
 PressKeyAction(){
@@ -171,23 +188,40 @@ SendCommandAction(){
 }
 
 ; Other actions
-WaitAction(){
+SleepAction(){
 
 }
+WaitColorAction(){
 
+}
+WaitImageAction(){
+
+}
 RepeatAction(){
 
 }
 
+; Profile menu actions
+LoadProfileAction(){
+
+}
+SaveProfileAction(){
+
+}
+CleanProfileAction(){
+
+}
+
 ; Configuration menu actions
-LoadConfigAction(){
-
+SetEnglishAction(){
+    if(language == "en")
+        return
+    SetConfig("GENERAL", "language", "en")
+    Reload
 }
-
-SaveConfigAction(){
-
-}
-
-CleanConfigAction(){
-
+SetSpanishAction(){
+    if(language == "spa")
+        return
+    SetConfig("GENERAL", "language", "spa")
+    Reload
 }
