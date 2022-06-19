@@ -66,12 +66,14 @@ ShowMainGui(){
     Menu, ActionsMenu, Add, % Get("Actions", "Keyboard"), :KeyboardSubMenu
 
     ; "Wait" sub-menu
-    Menu, WaitMenu, Add, % Get("Actions", "Sleep") , SleepAction
-    Menu, WaitMenu, Add, % Get("Actions", "WaitColor"), WaitColorAction
-    Menu, WaitMenu, Add, % Get("Actions", "WaitImage"), WaitImageAction
-    Menu, ActionsMenu, Add, % Get("Actions", "Wait"), :WaitMenu
+    Menu, WaitSubMenu, Add, % Get("Actions", "Sleep") , SleepAction
+    Menu, WaitSubMenu, Add, % Get("Actions", "WaitColor"), WaitColorAction
+    Menu, WaitSubMenu, Add, % Get("Actions", "WaitImage"), WaitImageAction
+    Menu, ActionsMenu, Add, % Get("Actions", "Wait"), :WaitSubMenu
 
     Menu, ActionsMenu, Add, % Get("Actions", "Repeat"), RepeatAction
+    Menu, ActionsMenu, Add, % Get("Actions", "RunCommand"), RunCommandAction
+
     Menu, MainMenuBar, Add, % Get("Actions", "AddAction"), :ActionsMenu
 
     ; "Profile" menu
@@ -82,10 +84,12 @@ ShowMainGui(){
     Menu, MainMenuBar, Add, % Get("Profile", "Profile"), :ProfileMenu
 
     ; "Configuration" menu
-    Menu, LangaugeMenu, Add, % Get("Languages", "en"), SetEnglishAction
-    Menu, LangaugeMenu, Add, % Get("Languages", "spa"), SetSpanishAction
-    Menu, LangaugeMenu, Check, % Get("Languages", language)
-    Menu, ConfigMenu, Add, % Get("Languages", "Language"), :LangaugeMenu
+
+    ; "Language" sub-menu
+    Menu, LangaugeSubMenu, Add, % Get("Languages", "en"), SetEnglishAction
+    Menu, LangaugeSubMenu, Add, % Get("Languages", "spa"), SetSpanishAction
+    Menu, LangaugeSubMenu, Check, % Get("Languages", language)
+    Menu, ConfigMenu, Add, % Get("Languages", "Language"), :LangaugeSubMenu
 
     Menu, MainMenuBar, Add, % Get("Configuration", "Configuration"), :ConfigMenu
 
@@ -200,6 +204,9 @@ WaitImageAction(){
 RepeatAction(){
 
 }
+RunCommandAction(){
+
+}
 
 ; Profile menu actions
 LoadProfileAction(){
@@ -213,15 +220,77 @@ CleanProfileAction(){
 }
 
 ; Configuration menu actions
-SetEnglishAction(){
-    if(language == "en")
+
+SetLanguage(newLanguage){
+    if(language == newLanguage)
         return
-    SetConfig("GENERAL", "language", "en")
-    Reload
+
+    ; Getting all sections names in the current language file
+    IniRead, sections, %resourcesPath%\languages\%language%.ini
+    sections := StrSplit(sections, "`n")
+
+    ; Changing language
+    Loop, % sections.Length(){
+        ; Getting current language values
+        IniRead, sectionCurrentValues, %resourcesPath%\languages\%language%.ini, % sections[A_Index]
+        sectionCurrentValues := StrSplit(sectionCurrentValues, "`n")
+
+        ; Getting new language values
+        IniRead, sectionNewValues, %resourcesPath%\languages\%newLanguage%.ini, % sections[A_Index]
+        sectionNewValues := StrSplit(sectionNewValues, "`n")
+
+        ; Changing values to the new language
+        Loop, % sectionCurrentValues.Length(){
+            currentValue := RegExReplace(sectionCurrentValues[A_Index], "(^[^=]+=)")
+            newValue := RegExReplace(sectionNewValues[A_Index], "(^[^=]+=)")
+
+            ; Changing menu bar items names
+            try{
+                Menu, MainMenuBar, Rename, %currentValue%, %newValue%
+            }
+            try{
+                Menu, FileMenu, Rename, %currentValue%, %newValue%
+            }
+            try{
+                Menu, ActionsMenu, Rename, %currentValue%, %newValue%
+            }
+            try{
+                Menu, MouseSubMenu, Rename, %currentValue%, %newValue%
+            }
+            try{
+                Menu, KeyboardSubMenu, Rename, %currentValue%, %newValue%
+            }
+            try{
+                Menu, WaitSubMenu, Rename, %currentValue%, %newValue%
+            }
+            try{
+                Menu, ProfileMenu, Rename, %currentValue%, %newValue%
+            }
+            try{
+                Menu, ConfigMenuProfileMenu, Rename, %currentValue%, %newValue%
+            }
+            try{
+                Menu, ConfigMenu, Rename, %currentValue%, %newValue%
+            }
+            try{
+                Menu, LangaugeSubMenu, Uncheck, %currentValue%
+                Menu, LangaugeSubMenu, Rename, %currentValue%, %newValue%
+            }
+            try{
+                Menu, HelpMenu, Rename, %currentValue%, %newValue%
+            }
+            catch{}
+        }
+    }
+
+    language := newLanguage
+    Menu, LangaugeSubMenu, Check, % Get("Languages", language)
+    SetConfig("GENERAL", "language", language)
+}
+
+SetEnglishAction(){
+    SetLanguage("en")
 }
 SetSpanishAction(){
-    if(language == "spa")
-        return
-    SetConfig("GENERAL", "language", "spa")
-    Reload
+    SetLanguage("spa")
 }
