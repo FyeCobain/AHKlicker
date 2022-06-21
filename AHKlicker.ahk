@@ -115,7 +115,7 @@ AboutAction(){
     Gui, -Caption +ToolWindow +Border +AlwaysOnTop
     Gui, Font, s12
 	Gui, Color, e9e9e9
-    Gui, Add, Text, x4 y4, AHKlicker 0.0.3-alpha
+    Gui, Add, Text, x4 y4, AHKlicker 0.0.4-alpha
     Gui, Font, c0000FF underline
 	Gui, Add, Text, x4 y36 gGoRepository, https://github.com/FyeCobain/AHKlicker.git
     Gui, Add, Picture, x312 y32 w30 h30 Icon135 gCopyRepository vcopyRepositoryButton, Shell32.dll
