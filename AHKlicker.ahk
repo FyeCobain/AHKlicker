@@ -10,6 +10,18 @@ global resourcesPath := A_WorkingDir "\resources"
 global language := GetConfig("GENERAL", "language")
 global profile := GetConfig("GENERAL", "profile")
 
+; Actions objects
+global actions := []
+global rightClick := Object("name", "RightClick", "x", 1, "y", 2)
+global leftClick := Object("name", "LeftClick", "x", -1, "y", -2)
+
+actions.push(rightClick)
+actions.push(leftClick)
+
+Loop, % actions.Length()
+    For key, value in actions[A_Index]
+        MsgBox %key% => %value%
+
 ; AUTO-EXECUTE SECTION
 ShowMainGui()
 return
