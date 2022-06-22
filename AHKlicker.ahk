@@ -25,8 +25,6 @@ Loop, % actions.Length()
 ; AUTO-EXECUTE SECTION
 ShowMainGui()
 
-;HOTKEYS
-
 ; FUNCTIONS
 
 ; Gets and returns a value from the config.ini file
