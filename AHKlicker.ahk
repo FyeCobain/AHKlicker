@@ -24,7 +24,8 @@ Loop, % actions.Length()
 
 ; AUTO-EXECUTE SECTION
 ShowMainGui()
-return
+
+;HOTKEYS
 
 ; FUNCTIONS
 
@@ -62,10 +63,10 @@ ShowMainGui(){
     ; "Add Action" menu
 
     ; "Mouse" sub-menu
-    Menu, MouseSubMenu, Add, % Get("Actions", "RightClick"), RightClickAction
-    Menu, MouseSubMenu, Add, % Get("Actions", "RightDrag"), RightDragAction
     Menu, MouseSubMenu, Add, % Get("Actions", "LeftClick"), LeftClickAction
     Menu, MouseSubMenu, Add, % Get("Actions", "LeftDrag"), LeftDragAction
+    Menu, MouseSubMenu, Add, % Get("Actions", "RightClick"), RightClickAction
+    Menu, MouseSubMenu, Add, % Get("Actions", "RightDrag"), RightDragAction
     Menu, MouseSubMenu, Add, % Get("Actions", "MiddleClick"), MiddleClickAction
     Menu, MouseSubMenu, Add, % Get("Actions", "MiddleDrag"), MiddleDragAction
     Menu, MouseSubMenu, Add, % Get("Actions", "ClickOnColor"), ClickOnColorAction
@@ -147,6 +148,23 @@ AboutOK(){
     Gui, about:Destroy
 }
 
+; Timer for confirmation tooltip message
+global tooltipMessage
+TooltipMessageTimer(){
+    ToolTip, %tooltipMessage%
+}
+
+; Wait confirmation or cancelation of adding an action
+AddConfirmation(confirmationMessage){
+    tooltipMessage := confirmationMessage
+    SetTimer, TooltipMessageTimer, 50
+    while(!GetKeyState("F3") && !GetKeyState("F4"))
+        continue
+    SetTimer, TooltipMessageTimer, Delete
+    ToolTip
+    return GetKeyState("F3")
+}
+
 ; File menu functions
 Start(){
     ExitApp
@@ -165,13 +183,13 @@ Exit(){
 }
 
 ; Actions menu funcitons
-MouseActions(){
 
-}
-
-; Mouse actions sub-menu 
+; Mouse actions sub-menu functions
 LeftClickAction(){
-
+    if(AddConfirmation("F3 => Left Click here`nF4 => Cancel"))
+        MsgBox, Action added
+    else
+        MsgBox, Action canceled
 }
 LeftDragAction(){
 
