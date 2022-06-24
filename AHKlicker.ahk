@@ -166,9 +166,9 @@ TooltipMessageTimer(){
 }
 
 ; Wait confirmation or cancelation of adding an action
-ConfirmClick(button){
+ConfirmClick(action){
     WinMinimize, %title% ahk_exe AutoHotkey.exe
-    tooltipMessage := okKey " = " button " here`n" cancelKey " = Cancel"
+    tooltipMessage := okKey " = " Get("Actions", action.name) " " Get("Dialogs", "Here") "`n" cancelKey " = Cancel"
     SetTimer, TooltipMessageTimer, 50
     while(!GetKeyState(okKey) && !GetKeyState(cancelKey))
         continue
@@ -176,27 +176,36 @@ ConfirmClick(button){
     SetTimer, TooltipMessageTimer, Delete
     ToolTip
     WinRestore, %title% ahk_exe AutoHotkey.exe
+    action.x := 282882
     return confirmed
 }
 
 ; Mouse actions sub-menu functions
 LeftClickAction(){
-    leftClick := {name: "LeftClick", x: 0, y: 0, window: "explorer.exe"}
-    if(!ConfirmClick(leftClick.name))
+    action := {name: "LeftClick", saveName: "", displayName: "", process: "explorer.exe", x: 0, y: 0}
+
+    if(!ConfirmClick(action))
         return
 
-    actions.push(leftClick)
+    action.displayName := Get("Actions", action.name) " [" action.process " ] ("  action.x ", " action.y ")"
+    action.saveName := "{" action.name "}[" action.process "]("  action.x "," action.y ")"
+
+    actions.push(action)
     ShowActions()
 }
 LeftDragAction(){
 
 }
 RightClickAction(){
-    rightClick := {name: "RightClick", x: 0, y: 0, window: "explorer.exe"}
-    if(!ConfirmClick(rightClick.name))
+    action := {name: "RightClick", saveName: "", displayName: "", process: "explorer.exe", x: 0, y: 0}
+    
+    if(!ConfirmClick(action))
         return
 
-    actions.push(rightClick)
+    action.displayName := Get("Actions", action.name) " [" action.process " ] ("  action.x ", " action.y ")"
+    action.saveName := "{" action.name "}[" action.process "]("  action.x "," action.y ")"
+
+    actions.push(action)
     ShowActions()
 }
 RightDragAction(){
@@ -329,4 +338,13 @@ SetSpanishAction(){
 
 ; ACTIONS LIST
 ShowActions(){
+    Gui, Font, s11
+
+    x := 2
+    y := 2
+
+    for key, action in actions{
+        Gui, Add, Text, x%x% y%y%, % A_Index ": " action.displayName
+        y += 16
+    }
 }
