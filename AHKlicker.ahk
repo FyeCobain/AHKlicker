@@ -6,21 +6,15 @@ Menu, Tray, Tip, AHKlicker
 Menu, Tray, Icon, %A_WorkingDir%\resources\images\icon.ico, 1, 1
 
 ; GLOBAL VARIABLES
+global title := "AHKlicker"
+global okKey := "F9"
+global cancelKey := "F10"
 global resourcesPath := A_WorkingDir "\resources"
 global language := GetConfig("GENERAL", "language")
 global profile := GetConfig("GENERAL", "profile")
 
 ; Actions objects
 global actions := []
-global rightClick := Object("name", "RightClick", "x", 1, "y", 2)
-global leftClick := Object("name", "LeftClick", "x", -1, "y", -2)
-
-actions.push(rightClick)
-actions.push(leftClick)
-
-Loop, % actions.Length()
-    For key, value in actions[A_Index]
-        MsgBox %key% => %value%
 
 ; AUTO-EXECUTE SECTION
 ShowMainGui()
@@ -113,7 +107,7 @@ ShowMainGui(){
 
     ; Showing main GUI
     Gui, +resize
-    Gui, Show, w500 h200
+    Gui, Show, w500 h200, %title%
 }
 mainGuiClose(){
     ExitApp
@@ -172,28 +166,38 @@ TooltipMessageTimer(){
 }
 
 ; Wait confirmation or cancelation of adding an action
-AddActionConfirmation(confirmationMessage){
-    tooltipMessage := confirmationMessage
+ConfirmClick(button){
+    WinMinimize, %title% ahk_exe AutoHotkey.exe
+    tooltipMessage := okKey " = " button " here`n" cancelKey " = Cancel"
     SetTimer, TooltipMessageTimer, 50
-    while(!GetKeyState("F3") && !GetKeyState("F4"))
+    while(!GetKeyState(okKey) && !GetKeyState(cancelKey))
         continue
+    confirmed := !GetKeyState(cancelKey)
     SetTimer, TooltipMessageTimer, Delete
     ToolTip
-    return GetKeyState("F3")
+    WinRestore, %title% ahk_exe AutoHotkey.exe
+    return confirmed
 }
 
 ; Mouse actions sub-menu functions
 LeftClickAction(){
-    if(AddActionConfirmation("F3 => Left Click here`nF4 => Cancel"))
-        MsgBox, Action added
-    else
-        MsgBox, Action canceled
+    leftClick := {name: "LeftClick", x: 0, y: 0, window: "explorer.exe"}
+    if(!ConfirmClick(leftClick.name))
+        return
+
+    actions.push(leftClick)
+    ShowActions()
 }
 LeftDragAction(){
 
 }
 RightClickAction(){
+    rightClick := {name: "RightClick", x: 0, y: 0, window: "explorer.exe"}
+    if(!ConfirmClick(rightClick.name))
+        return
 
+    actions.push(rightClick)
+    ShowActions()
 }
 RightDragAction(){
 
@@ -321,4 +325,8 @@ SetEnglishAction(){
 }
 SetSpanishAction(){
     SetLanguage("spa")
+}
+
+; ACTIONS LIST
+ShowActions(){
 }
