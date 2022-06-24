@@ -146,23 +146,6 @@ AboutOK(){
     Gui, about:Destroy
 }
 
-; Timer for confirmation tooltip message
-global tooltipMessage
-TooltipMessageTimer(){
-    ToolTip, %tooltipMessage%
-}
-
-; Wait confirmation or cancelation of adding an action
-AddConfirmation(confirmationMessage){
-    tooltipMessage := confirmationMessage
-    SetTimer, TooltipMessageTimer, 50
-    while(!GetKeyState("F3") && !GetKeyState("F4"))
-        continue
-    SetTimer, TooltipMessageTimer, Delete
-    ToolTip
-    return GetKeyState("F3")
-}
-
 ; File menu functions
 Start(){
     ExitApp
@@ -182,9 +165,26 @@ Exit(){
 
 ; Actions menu funcitons
 
+; Timer for confirmation tooltip message
+global tooltipMessage
+TooltipMessageTimer(){
+    ToolTip, %tooltipMessage%
+}
+
+; Wait confirmation or cancelation of adding an action
+AddActionConfirmation(confirmationMessage){
+    tooltipMessage := confirmationMessage
+    SetTimer, TooltipMessageTimer, 50
+    while(!GetKeyState("F3") && !GetKeyState("F4"))
+        continue
+    SetTimer, TooltipMessageTimer, Delete
+    ToolTip
+    return GetKeyState("F3")
+}
+
 ; Mouse actions sub-menu functions
 LeftClickAction(){
-    if(AddConfirmation("F3 => Left Click here`nF4 => Cancel"))
+    if(AddActionConfirmation("F3 => Left Click here`nF4 => Cancel"))
         MsgBox, Action added
     else
         MsgBox, Action canceled
