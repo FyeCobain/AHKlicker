@@ -39,6 +39,36 @@ Get(section, key){
 }
 
 ; Shows the main GUI
+global action1
+global action2
+global action3
+global action4
+global action5
+global action6
+global action7
+global action8
+global action9
+global action10
+global action11
+global action12
+global action13
+global action14
+global action15
+global action16
+global action17
+global action18
+global action19
+global action20
+global action21
+global action22
+global action23
+global action24
+global action25
+global action26
+global action27
+global action28
+global action29
+global action30
 ShowMainGui(){
     ; Creating main GUI
     Gui, main:New
@@ -105,9 +135,18 @@ ShowMainGui(){
     ; Adding main menu bar to the GUI
     Gui, Menu, MainMenuBar
 
+    ; Adding empty texts to the GUI
+    Gui, Font, s11
+    x := 2
+    y := 2
+    Loop, 30{
+        Gui, Add, Text, x%x% y%y% w350 vaction%A_Index%
+        y += 16
+    }
+
     ; Showing main GUI
     Gui, +resize
-    Gui, Show, w500 h200, %title%
+    Gui, Show, % "w350 h484 y" A_ScreenHeight / 2 - 242 + 40 , %title%
 }
 mainGuiClose(){
     ExitApp
@@ -126,7 +165,7 @@ AboutAction(){
     Gui, Add, Picture, x312 y32 w30 h30 Icon135 gCopyRepository vcopyRepositoryButton, Shell32.dll
     Gui, Font, s12 norm
     Gui, Add, Button, w80 x135 y70 gAboutOK, % Get("Dialogs", "OK")
-    Gui, Show, w350 h120
+    Gui, Show, w348 h120
 }
 GoRepository(){
     Run, https://github.com/FyeCobain/AHKlicker.git
@@ -336,15 +375,10 @@ SetSpanishAction(){
     SetLanguage("spa")
 }
 
-; ACTIONS LIST
+; Show actions list in the GUI
 ShowActions(){
-    Gui, Font, s11
-
-    x := 2
-    y := 2
-
     for key, action in actions{
-        Gui, Add, Text, x%x% y%y%, % A_Index ": " action.displayName
+        GuiControl, , action%A_Index%, % A_Index ": " action.displayName
         y += 16
     }
 }
