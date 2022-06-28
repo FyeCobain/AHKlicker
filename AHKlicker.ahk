@@ -34,8 +34,7 @@ SetConfig(section, key, value){
 
 ; Gets and returns a value from the current (or the given) language file
 Get(section, key, languageFile := false){
-    if(!languageFile)
-        languageFile := language
+    languageFile := languageFile ? languageFile : language
     IniRead, value, %resourcesPath%\languages\%languageFile%.ini, %section%, %key%, [{%key%}]
     return value
 }
