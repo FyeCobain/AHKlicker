@@ -32,9 +32,11 @@ SetConfig(section, key, value){
     IniWrite, %value%,  %resourcesPath%\config.ini, %section%, %key%
 }
 
-; Gets and returns a value from the current language file
-Get(section, key){
-    IniRead, value, %resourcesPath%\languages\%language%.ini, %section%, %key%, [{%key%}]
+; Gets and returns a value from the current (or the given) language file
+Get(section, key, languageFile := false){
+    if(!languageFile)
+        languageFile := language
+    IniRead, value, %resourcesPath%\languages\%languageFile%.ini, %section%, %key%, [{%key%}]
     return value
 }
 
@@ -363,6 +365,12 @@ SetLanguage(newLanguage){
         }
     }
 
+    ; Translating actions display names 
+    Loop, % actions.Length()
+        actions[A_Index].displayName := StrReplace(actions[A_Index].displayName, Get("Actions", actions[A_Index].name), Get("Actions", actions[A_Index].name, newLanguage))
+    ShowActions()
+
+    ; Saving language configuration
     language := newLanguage
     Menu, LangaugeSubMenu, Check, % Get("Languages", language)
     SetConfig("GENERAL", "language", language)
