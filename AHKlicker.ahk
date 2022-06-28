@@ -110,6 +110,10 @@ ShowMainGui(){
     Menu, ActionsMenu, Add, % Get("Actions", "Repeat"), RepeatAction
     Menu, ActionsMenu, Add, % Get("Actions", "RunCommand"), RunCommandAction
 
+    Menu, ActionsMenu, Add
+
+    Menu, ActionsMenu, Add, % Get("Tools", "ColorPicker"), PickColorAction
+
     Menu, MainMenuBar, Add, % Get("Actions", "AddAction"), :ActionsMenu
 
     ; "Profile" menu
@@ -205,18 +209,22 @@ TooltipMessageTimer(){
     ToolTip, %tooltipMessage%
 }
 
-; Wait confirmation or cancelation of adding an action
-ConfirmClick(action){
+; Wait confirmation or cancelation in the current mouse position
+ConfirmInMousePosition(obj, section:="Actions"){
     WinMinimize, %title% ahk_exe AutoHotkey.exe
-    tooltipMessage := okKey " = " Get("Actions", action.name) " " Get("Dialogs", "Here") "`n" cancelKey " = Cancel"
+    tooltipMessage := okKey " = " Get(section, obj.name) " " Get("Dialogs", "Here") "`n" cancelKey " = Cancel"
     SetTimer, TooltipMessageTimer, 50
     while(!GetKeyState(okKey) && !GetKeyState(cancelKey))
         continue
     confirmed := !GetKeyState(cancelKey)
+    MouseGetPos, mX, mY, winId
+    PixelGetColor, color, %mX%, %mY%, Slow RGB
+    obj.x := mX
+    obj.y := mY
+    obj.pixelColor := color
     SetTimer, TooltipMessageTimer, Delete
     ToolTip
     WinRestore, %title% ahk_exe AutoHotkey.exe
-    action.x := 282882
     return confirmed
 }
 
@@ -224,7 +232,7 @@ ConfirmClick(action){
 LeftClickAction(){
     action := {name: "LeftClick", saveName: "", displayName: "", process: "explorer.exe", x: 0, y: 0}
 
-    if(!ConfirmClick(action))
+    if(!ConfirmInMousePosition(action))
         return
 
     action.displayName := Get("Actions", action.name) " [" action.process " ] ("  action.x ", " action.y ")"
@@ -239,7 +247,7 @@ LeftDragAction(){
 RightClickAction(){
     action := {name: "RightClick", saveName: "", displayName: "", process: "explorer.exe", x: 0, y: 0}
     
-    if(!ConfirmClick(action))
+    if(!ConfirmInMousePosition(action))
         return
 
     action.displayName := Get("Actions", action.name) " [" action.process " ] ("  action.x ", " action.y ")"
@@ -287,6 +295,13 @@ RepeatAction(){
 }
 RunCommandAction(){
 
+}
+PickColorAction(){
+    colorObj := {name: "ColorPicker", saveName: "", displayName: "", process: "explorer.exe", x: 0, y: 0}
+    if(!ConfirmInMousePosition(colorObj, "Tools"))
+       return
+
+    
 }
 
 ; Profile menu actions
