@@ -219,9 +219,11 @@ ConfirmInMousePosition(obj, section:="Actions"){
     confirmed := !GetKeyState(cancelKey)
     MouseGetPos, mX, mY, winId
     PixelGetColor, color, %mX%, %mY%, Slow RGB
+    WinGet, winExe, ProcessName, ahk_id %winId%
     obj.x := mX
     obj.y := mY
-    obj.pixelColor := color
+    obj.process := winExe
+    obj.pixelColor := StrReplace(color, "0x", "#")
     SetTimer, TooltipMessageTimer, Delete
     ToolTip
     WinRestore, %title% ahk_exe AutoHotkey.exe
@@ -230,7 +232,7 @@ ConfirmInMousePosition(obj, section:="Actions"){
 
 ; Mouse actions sub-menu functions
 LeftClickAction(){
-    action := {name: "LeftClick", saveName: "", displayName: "", process: "explorer.exe", x: 0, y: 0}
+    action := {name: "LeftClick"}
 
     if(!ConfirmInMousePosition(action))
         return
@@ -245,7 +247,7 @@ LeftDragAction(){
 
 }
 RightClickAction(){
-    action := {name: "RightClick", saveName: "", displayName: "", process: "explorer.exe", x: 0, y: 0}
+    action := {name: "RightClick"}
     
     if(!ConfirmInMousePosition(action))
         return
@@ -297,11 +299,14 @@ RunCommandAction(){
 
 }
 PickColorAction(){
-    colorObj := {name: "ColorPicker", saveName: "", displayName: "", process: "explorer.exe", x: 0, y: 0}
+    colorObj := {name: "ColorPicker"}
     if(!ConfirmInMousePosition(colorObj, "Tools"))
        return
 
-    
+    Clipboard := colorObj.pixelColor
+    ToolTip, % colorObj.pixelColor " copied"
+    Sleep, 1250
+    ToolTip
 }
 
 ; Profile menu actions
