@@ -262,7 +262,16 @@ RightDragAction(){
 
 }
 MiddleClickAction(){
+    action := {name: "MiddleClick"}
+    
+    if(!ConfirmInMousePosition(action))
+        return
 
+    action.displayName := Get("Actions", action.name) " [" action.process " ] ("  action.x ", " action.y ")"
+    action.saveName := "{" action.name "}[" action.process "]("  action.x "," action.y ")"
+
+    actions.push(action)
+    ShowActions()
 }
 MiddleDragAction(){
 
