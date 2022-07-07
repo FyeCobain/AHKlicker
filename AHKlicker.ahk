@@ -228,15 +228,17 @@ ConfirmInMousePosition(obj, pickingColor:=false, section:="Actions"){
         }
     }
     confirmed := !GetKeyState(cancelKey)
+    SetTimer, TooltipMessageTimer, Delete
+    ToolTip
+    WinRestore, %title% ahk_exe AutoHotkey.exe
+    if(!confirmed)
+        return false
     WinGet, winExe, ProcessName, ahk_id %winId%
     obj.x := mX
     obj.y := mY
     obj.process := winExe
     obj.pixelColor := StrReplace(color, "0x", "#")
-    SetTimer, TooltipMessageTimer, Delete
-    ToolTip
-    WinRestore, %title% ahk_exe AutoHotkey.exe
-    return confirmed
+    return true
 }
 
 ; Mouse actions sub-menu functions
