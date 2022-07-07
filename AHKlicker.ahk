@@ -210,15 +210,24 @@ TooltipMessageTimer(){
 }
 
 ; Wait confirmation or cancelation in the current mouse position
-ConfirmInMousePosition(obj, section:="Actions"){
+ConfirmInMousePosition(obj, pickingColor:=false, section:="Actions"){
     WinMinimize, %title% ahk_exe AutoHotkey.exe
-    tooltipMessage := okKey " = " Get(section, obj.name) " " Get("Dialogs", "Here") "`n" cancelKey " = Cancel"
+    if(!pickingColor)
+        tooltipMessage := okKey " = " Get(section, obj.name) " " Get("Dialogs", "Here") "`n" cancelKey " = " Get("Dialogs", "Cancel")
+    else{
+        MouseGetPos, mX, mY, winId
+        PixelGetColor, color, %mX%, %mY%, Slow RGB
+        tooltipMessage := okKey " = " StrReplace(color, "0x", "$") "`n" cancelKey " = " Get("Dialogs", "Cancel")
+    }
     SetTimer, TooltipMessageTimer, 50
-    while(!GetKeyState(okKey) && !GetKeyState(cancelKey))
-        continue
+    while(!GetKeyState(okKey) && !GetKeyState(cancelKey)){
+        MouseGetPos, mX, mY, winId
+        if(pickingColor){
+            PixelGetColor, color, %mX%, %mY%, Slow RGB
+            tooltipMessage := okKey " = " StrReplace(color, "0x", "#") "`n" cancelKey " = " Get("Dialogs", "Cancel")
+        }
+    }
     confirmed := !GetKeyState(cancelKey)
-    MouseGetPos, mX, mY, winId
-    PixelGetColor, color, %mX%, %mY%, Slow RGB
     WinGet, winExe, ProcessName, ahk_id %winId%
     obj.x := mX
     obj.y := mY
@@ -309,12 +318,12 @@ RunCommandAction(){
 }
 PickColorAction(){
     colorObj := {name: "ColorPicker"}
-    if(!ConfirmInMousePosition(colorObj, "Tools"))
+    if(!ConfirmInMousePosition(colorObj, true, "Tools"))
        return
 
     Clipboard := colorObj.pixelColor
-    ToolTip, % colorObj.pixelColor " copied"
-    Sleep, 1250
+    ToolTip, Color picked
+    Sleep, 1000
     ToolTip
 }
 
