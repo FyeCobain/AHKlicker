@@ -324,8 +324,8 @@ PickColorAction(){
        return
 
     Clipboard := colorObj.pixelColor
-    ToolTip, Color picked
-    Sleep, 1000
+    ToolTip, % Get("Tools", "ColorPicked")
+    Sleep, 1150
     ToolTip
 }
 
