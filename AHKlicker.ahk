@@ -213,7 +213,7 @@ TooltipMessageTimer(){
 
 ; Confirming click
 ConfirmClick(actionObject){
-    WinMinimize, %title% ahk_exe AutoHotkey.exe
+    minimize()
     tooltipMessage := okKey " = " Get("Actions", actionObject.name) " " Get("Dialogs", "Here") "`n" cancelKey " = " Get("Dialogs", "Cancel")
     SetTimer, TooltipMessageTimer, 50
     while(!GetKeyState(okKey) && !GetKeyState(cancelKey))
@@ -221,7 +221,7 @@ ConfirmClick(actionObject){
     confirmed := !GetKeyState(cancelKey)
     SetTimer, TooltipMessageTimer, Delete
     ToolTip
-    WinRestore, %title% ahk_exe AutoHotkey.exe
+    restore()
     if(!confirmed)
         return false
     WinGet, winExe, ProcessName, ahk_id %winId%
@@ -233,12 +233,48 @@ ConfirmClick(actionObject){
 
 ; Confirmig mouse drag
 ConfirmDrag(actionObject){
-    MsgBox, % Get("Actions", actionObject.name) ;TO-DO
+    minimize()
+    switch actionObject.name{
+        case "LeftDrag":
+            button := "LButton"
+        case "RightDrag":
+            button := "RButton"
+        case "MiddleDrag":
+            button := "MButton"
+    }
+    tooltipMessage := Get("Dialogs", "PerformADrag") "`n" cancelKey " = " Get("Dialogs", "Cancel")
+    SetTimer, TooltipMessageTimer, 50
+    dragDone := false
+    while(!GetKeyState(cancelKey)){
+        MouseGetPos, mX1, mY1, winId
+        while(GetKeyState(button))
+            MouseGetPos, mX2, mY2, winId
+        if(mX2 >= 0)
+            if(Abs(mX2 - mX1) >= 5 || Abs(mY2 - mY1) >= 5){
+                dragDone := true
+                break
+            }
+        mX2 :=
+    }
+    SetTimer, TooltipMessageTimer, Delete
+    ToolTip
+    if(!dragDone){
+        restore()
+        return false
+    }
+    MsgBox, % 1 + 32, Confirmation, Confirm previous drag?
+    IfMsgBox OK
+    {
+        MsgBox, TO-DO
+        return false
+    }
+    else
+        return ConfirmDrag(actionObject)
 }
 
 ; Confirming color picking
 ConfirmColorPick(colorObject){
-    WinMinimize, %title% ahk_exe AutoHotkey.exe
+    minimize()
     SetTimer, TooltipMessageTimer, 50
     while(!GetKeyState(okKey) && !GetKeyState(cancelKey)){
         MouseGetPos, mX, mY, winId
@@ -248,7 +284,7 @@ ConfirmColorPick(colorObject){
     confirmed := !GetKeyState(cancelKey)
     SetTimer, TooltipMessageTimer, Delete
     ToolTip
-    WinRestore, %title% ahk_exe AutoHotkey.exe
+    restore()
     if(!confirmed)
         return false
     colorObject.pixelColor := StrReplace(color, "0x", "#")
@@ -286,7 +322,11 @@ RightClickAction(){
     ShowActions()
 }
 RightDragAction(){
+    action := {name: "RightDrag"}
+    if(!ConfirmDrag(action))
+        return
 
+    ;TO-DO
 }
 MiddleClickAction(){
     action := {name: "MiddleClick"}
@@ -301,7 +341,11 @@ MiddleClickAction(){
     ShowActions()
 }
 MiddleDragAction(){
+    action := {name: "MiddleDrag"}
+    if(!ConfirmDrag(action))
+        return
 
+    ;TO-DO
 }
 ClickOnColorAction(){
 
@@ -354,6 +398,18 @@ SaveProfileAction(){
 }
 CleanProfileAction(){
 
+}
+
+; Minimize the GUI
+minimize(){
+    WinMinimize, %title% ahk_exe AutoHotkey.exe
+    WinMinimize, %title% ahk_exe AutoHotkeyU64.exe
+}
+
+; Restore the GUI
+restore(){
+    WinRestore, %title% ahk_exe AutoHotkey.exe
+    WinRestore, %title% ahk_exe AutoHotkeyU64.exe
 }
 
 ; Configuration menu actions
