@@ -151,7 +151,7 @@ ShowMainGui(){
 
     ; Showing main GUI
     Gui, +resize
-    Gui, Show, % "w350 h484 y" A_ScreenHeight / 2 - 242 + 40 , %title%
+    Gui, Show, % "w400 h484 y" A_ScreenHeight / 2 - 242 + 40 , %title%
 }
 mainGuiClose(){
     ExitApp
@@ -217,16 +217,20 @@ ConfirmClick(actionObject){
     tooltipMessage := okKey " = " Get("Actions", actionObject.name) " " Get("Dialogs", "Here") "`n" cancelKey " = " Get("Dialogs", "Cancel")
     SetTimer, TooltipMessageTimer, 50
     while(!GetKeyState(okKey) && !GetKeyState(cancelKey))
-        MouseGetPos, mX, mY, winId
-    confirmed := !GetKeyState(cancelKey)
+        continue
     SetTimer, TooltipMessageTimer, Delete
     ToolTip
-    restore()
-    if(!confirmed)
+    if(GetKeyState(cancelKey)){
+        restore()
         return false
-    WinGet, winExe, ProcessName, ahk_id %winId%
+    }
+    MouseGetPos, , , winId
+    WinActivate, ahk_id %winId%
+    MouseGetPos, mX, mY
+    restore()
     actionObject.x := mX
     actionObject.y := mY
+    WinGet, winExe, ProcessName, ahk_id %winId%
     actionObject.process := winExe
     return true
 }
@@ -234,22 +238,16 @@ ConfirmClick(actionObject){
 ; Confirmig mouse drag
 ConfirmDrag(actionObject){
     minimize()
-    switch actionObject.name{
-        case "LeftDrag":
-            button := "LButton"
-        case "RightDrag":
-            button := "RButton"
-        case "MiddleDrag":
-            button := "MButton"
-    }
-    tooltipMessage := Get("Dialogs", "PerformADrag") "`n" cancelKey " = " Get("Dialogs", "Cancel")
+    tooltipMessage := Get("Actions", actionObject.name) "`n" cancelKey " = " Get("Dialogs", "Cancel")
     SetTimer, TooltipMessageTimer, 50
     dragDone := false
     while(!GetKeyState(cancelKey)){
-        MouseGetPos, mX1, mY1, winId
-        while(GetKeyState(button))
-            MouseGetPos, mX2, mY2, winId
-        if(mX2 >= 0)
+        if(!GetKeyState(actionObject.button))
+            continue
+        MouseGetPos, mX1, mY1, winId1
+        while(GetKeyState(actionObject.button))
+            MouseGetPos, mX2, mY2, winId2
+        if(mX2 >= 0 && winId1 == winId2)
             if(Abs(mX2 - mX1) >= 5 || Abs(mY2 - mY1) >= 5){
                 dragDone := true
                 break
@@ -262,11 +260,17 @@ ConfirmDrag(actionObject){
         restore()
         return false
     }
-    MsgBox, % 1 + 32, Confirmation, Confirm previous drag?
-    IfMsgBox OK
+    MsgBox, % 4 + 32, % Get("Dialogs", "Confirmation"), % Get("Dialogs", "DragConfirmation")
+    IfMsgBox Yes
     {
-        MsgBox, TO-DO
-        return false
+        actionObject.x1 := mX1
+        actionObject.y1 := mY1
+        actionObject.x2 := mX2
+        actionObject.y2 := mY2
+        WinGet, winExe, ProcessName, ahk_id %winId1%
+        actionObject.process := winExe
+        restore()
+        return true
     }
     else
         return ConfirmDrag(actionObject)
@@ -291,42 +295,62 @@ ConfirmColorPick(colorObject){
     return true
 }
 
+; Returns the button corresponding to the action's name
+GetButtonName(actionName){
+    switch actionName{
+        case "LeftDrag":
+            return "LButton"
+        case "RightDrag":
+            return "RButton"
+        case "MiddleDrag":
+            return "MButton"
+    }
+}
+
 ; Mouse actions sub-menu functions
 LeftClickAction(){
     action := {name: "LeftClick"}
     if(!ConfirmClick(action))
         return
 
-    action.displayName := Get("Actions", action.name) " [" action.process " ] ("  action.x ", " action.y ")"
     action.saveName := "{" action.name "}[" action.process "]("  action.x "," action.y ")"
+    action.displayName := Get("Actions", action.name) " [" action.process " ] ("  action.x ", " action.y ")"
 
     actions.push(action)
     ShowActions()
 }
 LeftDragAction(){
-    action := {name: "LeftDrag"}
+    action := {name: "LeftDrag", button: "LButton"}
     if(!ConfirmDrag(action))
         return
 
-    ;TO-DO
+    action.saveName := "{" action.name "}[" action.process "]("  action.x1 "," action.y1 ")(" action.x2 "," action.y2 ")"
+    action.displayName := Get("Actions", action.name) " [" action.process " ] ("  action.x1 ", " action.y1 ") => (" action.x2 ", " action.y2 ")"
+
+    actions.push(action)
+    ShowActions()
 }
 RightClickAction(){
     action := {name: "RightClick"}
     if(!ConfirmClick(action))
         return
 
-    action.displayName := Get("Actions", action.name) " [" action.process " ] ("  action.x ", " action.y ")"
     action.saveName := "{" action.name "}[" action.process "]("  action.x "," action.y ")"
+    action.displayName := Get("Actions", action.name) " [" action.process " ] ("  action.x ", " action.y ")"
 
     actions.push(action)
     ShowActions()
 }
 RightDragAction(){
-    action := {name: "RightDrag"}
+    action := {name: "RightDrag", button: "RButton"}
     if(!ConfirmDrag(action))
         return
 
-    ;TO-DO
+    action.saveName := "{" action.name "}[" action.process "]("  action.x1 "," action.y1 ")(" action.x2 "," action.y2 ")"
+    action.displayName := Get("Actions", action.name) " [" action.process " ] ("  action.x1 ", " action.y1 ") => (" action.x2 ", " action.y2 ")"
+
+    actions.push(action)
+    ShowActions()
 }
 MiddleClickAction(){
     action := {name: "MiddleClick"}
@@ -334,18 +358,22 @@ MiddleClickAction(){
     if(!ConfirmClick(action))
         return
 
-    action.displayName := Get("Actions", action.name) " [" action.process " ] ("  action.x ", " action.y ")"
     action.saveName := "{" action.name "}[" action.process "]("  action.x "," action.y ")"
+    action.displayName := Get("Actions", action.name) " [" action.process " ] ("  action.x ", " action.y ")"
 
     actions.push(action)
     ShowActions()
 }
 MiddleDragAction(){
-    action := {name: "MiddleDrag"}
+    action := {name: "MiddleDrag", button: "MButton"}
     if(!ConfirmDrag(action))
         return
 
-    ;TO-DO
+    action.saveName := "{" action.name "}[" action.process "]("  action.x1 "," action.y1 ")(" action.x2 "," action.y2 ")"
+    action.displayName := Get("Actions", action.name) " [" action.process " ] ("  action.x1 ", " action.y1 ") => (" action.x2 ", " action.y2 ")"
+
+    actions.push(action)
+    ShowActions()
 }
 ClickOnColorAction(){
 
