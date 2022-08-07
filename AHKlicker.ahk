@@ -145,7 +145,7 @@ ShowMainGui(){
     x := 2
     y := 2
     Loop, 30{
-        Gui, Add, Text, x%x% y%y% w350 vaction%A_Index%
+        Gui, Add, Text, x%x% y%y% w400 vaction%A_Index%
         y += 16
     }
 
@@ -293,18 +293,6 @@ ConfirmColorPick(colorObject){
         return false
     colorObject.pixelColor := StrReplace(color, "0x", "#")
     return true
-}
-
-; Returns the button corresponding to the action's name
-GetButtonName(actionName){
-    switch actionName{
-        case "LeftDrag":
-            return "LButton"
-        case "RightDrag":
-            return "RButton"
-        case "MiddleDrag":
-            return "MButton"
-    }
 }
 
 ; Mouse actions sub-menu functions
@@ -523,9 +511,10 @@ SetSpanishAction(){
 }
 
 ; Show actions list in the GUI
-ShowActions(){
-    for key, action in actions{
-        GuiControl, , action%A_Index%, % A_Index ": " action.displayName
-        y += 16
-    }
+ShowActions(actionDeleted := false){
+    for key, action in actions
+        GuiControl, main:, action%A_Index%, % A_Index ": " action.displayName
+    if(actionDeleted)
+        Loop, % 30 - actions.Length()
+            GuiControl, main:, % "action" A_Index + actions.Length()
 }
