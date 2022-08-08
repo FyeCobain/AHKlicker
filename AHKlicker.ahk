@@ -488,7 +488,6 @@ SetLanguage(newLanguage){
             try{
                 Menu, HelpMenu, Rename, %currentValue%, %newValue%
             }
-            catch{}
         }
     }
 
