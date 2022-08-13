@@ -92,7 +92,10 @@ ShowMainGui(){
     Menu, MouseSubMenu, Add, % Get("Actions", "RightDrag"), RightDragAction
     Menu, MouseSubMenu, Add, % Get("Actions", "MiddleClick"), MiddleClickAction
     Menu, MouseSubMenu, Add, % Get("Actions", "MiddleDrag"), MiddleDragAction
-    Menu, MouseSubMenu, Add, % Get("Actions", "ClickOnColor"), ClickOnColorAction
+    ; Click On Color sub-sub-menu...
+    Menu, ClickOnColorSubSubMenu, Add, % Get("Actions", "AtMousePosition"), ClickOnColorAtMousePositionAction
+    Menu, ClickOnColorSubSubMenu, Add, % Get("Actions", "EnterColor"), ClickOnColorEnterColorAction
+    Menu, MouseSubMenu, Add, % Get("Actions", "ClickOnColor"), :ClickOnColorSubSubMenu
     Menu, ActionsMenu, Add, % Get("Actions", "Mouse"), :MouseSubMenu
 
     ; "Keyboard" sub-menu
@@ -363,7 +366,10 @@ MiddleDragAction(){
     actions.push(action)
     ShowActions()
 }
-ClickOnColorAction(){
+ClickOnColorAtMousePositionAction(){
+    
+}
+ClickOnColorEnterColorAction(){
 
 }
 
@@ -465,6 +471,9 @@ SetLanguage(newLanguage){
             }
             try{
                 Menu, MouseSubMenu, Rename, %currentValue%, %newValue%
+            }
+            try{
+                Menu, ClickOnColorSubSubMenu, Rename, %currentValue%, %newValue%
             }
             try{
                 Menu, KeyboardSubMenu, Rename, %currentValue%, %newValue%
