@@ -92,7 +92,7 @@ ShowMainGui(){
     Menu, MouseSubMenu, Add, % Get("Actions", "RightDrag"), RightDragAction
     Menu, MouseSubMenu, Add, % Get("Actions", "MiddleClick"), MiddleClickAction
     Menu, MouseSubMenu, Add, % Get("Actions", "MiddleDrag"), MiddleDragAction
-    ; Click On Color sub-sub-menu...
+    ; Click On Color sub sub-menu...
     Menu, ClickOnColorSubSubMenu, Add, % Get("Actions", "AtMousePosition"), ClickOnColorAtMousePositionAction
     Menu, ClickOnColorSubSubMenu, Add, % Get("Actions", "EnterColor"), ClickOnColorEnterColorAction
     Menu, MouseSubMenu, Add, % Get("Actions", "ClickOnColor"), :ClickOnColorSubSubMenu
@@ -367,7 +367,7 @@ MiddleDragAction(){
     ShowActions()
 }
 ClickOnColorAtMousePositionAction(){
-    
+
 }
 ClickOnColorEnterColorAction(){
 
@@ -462,40 +462,52 @@ SetLanguage(newLanguage){
             ; Changing menu bar items names
             try{
                 Menu, MainMenuBar, Rename, %currentValue%, %newValue%
+                continue
             }
             try{
                 Menu, FileMenu, Rename, %currentValue%, %newValue%
+                continue
             }
             try{
                 Menu, ActionsMenu, Rename, %currentValue%, %newValue%
+                continue
             }
             try{
                 Menu, MouseSubMenu, Rename, %currentValue%, %newValue%
+                continue
             }
             try{
                 Menu, ClickOnColorSubSubMenu, Rename, %currentValue%, %newValue%
+                continue
             }
             try{
                 Menu, KeyboardSubMenu, Rename, %currentValue%, %newValue%
+                continue
             }
             try{
                 Menu, WaitSubMenu, Rename, %currentValue%, %newValue%
+                continue
             }
             try{
                 Menu, ProfileMenu, Rename, %currentValue%, %newValue%
+                continue
             }
             try{
                 Menu, ConfigMenuProfileMenu, Rename, %currentValue%, %newValue%
+                continue
             }
             try{
                 Menu, ConfigMenu, Rename, %currentValue%, %newValue%
+                continue
             }
             try{
                 Menu, LangaugeSubMenu, Uncheck, %currentValue%
                 Menu, LangaugeSubMenu, Rename, %currentValue%, %newValue%
+                continue
             }
             try{
                 Menu, HelpMenu, Rename, %currentValue%, %newValue%
+                continue
             }
         }
     }
