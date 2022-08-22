@@ -13,7 +13,8 @@ global resourcesPath := A_WorkingDir "\resources"
 global language := GetConfig("GENERAL", "language")
 global profile := GetConfig("GENERAL", "profile")
 
-; Actions objects
+; Max number of actions and actions objects array
+global maxActions := 35
 global actions := []
 
 ; AUTO-EXECUTE SECTION
@@ -70,6 +71,11 @@ global action27
 global action28
 global action29
 global action30
+global action31
+global action32
+global action33
+global action34
+global action35
 ShowMainGui(){
     ; Creating main GUI
     Gui, main:New
@@ -143,18 +149,21 @@ ShowMainGui(){
     ; Adding main menu bar to the GUI
     Gui, Menu, MainMenuBar
 
+    ; Gui width and height
+    guiWidth := 400
+    guiHeight := 16 * maxActions
+
     ; Adding empty texts to the GUI
     Gui, Font, s11
-    x := 2
-    y := 2
-    Loop, 30{
-        Gui, Add, Text, x%x% y%y% w400 vaction%A_Index%
+    y := 0
+    Loop, %maxActions%{
+        Gui, Add, Text, x2 y%y% w%guiWidth% vaction%A_Index%
         y += 16
     }
 
     ; Showing main GUI
     Gui, +resize
-    Gui, Show, % "w400 h484 y" A_ScreenHeight / 2 - 242 + 40 , %title%
+    Gui, Show, % "w" guiWidth " h" guiHeight " y" Floor(A_ScreenHeight / 2 - guiHeight / 2 - maxActions), %title%
 }
 mainGuiClose(){
     ExitApp
@@ -534,6 +543,6 @@ ShowActions(actionDeleted := false){
     for key, action in actions
         GuiControl, main:, action%A_Index%, % A_Index ": " action.displayName
     if(actionDeleted)
-        Loop, % 30 - actions.Length()
+        Loop, % maxActions - actions.Length()
             GuiControl, main:, % "action" A_Index + actions.Length()
 }
