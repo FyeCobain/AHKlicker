@@ -160,7 +160,7 @@ ShowMainGui(){
         Gui, Add, Text, x2 y%y% w%guiWidth% vaction%A_Index%
         y += 16
     }
-
+    
     ; Showing main GUI
     Gui, +resize
     Gui, Show, % "w" guiWidth " h" guiHeight " y" Floor(A_ScreenHeight / 2 - guiHeight / 2 - maxActions), %title%
@@ -176,20 +176,20 @@ AboutAction(){
     Gui, -Caption +ToolWindow +Border +AlwaysOnTop
     Gui, Font, s12
 	Gui, Color, e9e9e9
-    Gui, Add, Text, x4 y4, AHKlicker 0.1.0-alpha
+    Gui, Add, Text, x4 y4, AHKlicker 0.2.0-alpha
     Gui, Font, c0000FF underline
-	Gui, Add, Text, x4 y36 gGoRepository, https://github.com/FyeCobain/AHKlicker.git
+	Gui, Add, Text, x4 y36 gGoRepository, % GetConfig("About", "repo")
     Gui, Add, Picture, x312 y32 w30 h30 Icon135 gCopyRepository vcopyRepositoryButton, Shell32.dll
     Gui, Font, s12 norm
     Gui, Add, Button, w80 x135 y70 gAboutOK, % Get("Dialogs", "OK")
     Gui, Show, w348 h120
 }
 GoRepository(){
-    Run, https://github.com/FyeCobain/AHKlicker.git
+    Run, % GetConfig("About", "repo")
     AboutOK()
 }
 CopyRepository(){
-    Clipboard := "https://github.com/FyeCobain/AHKlicker.git"
+    Clipboard := GetConfig("About", "repo")
     GuiControl, , copyRepositoryButton, *icon303 Shell32.dll
 }
 AboutOK(){
