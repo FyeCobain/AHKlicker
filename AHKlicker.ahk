@@ -98,10 +98,10 @@ ShowMainGui(){
     Menu, MouseSubMenu, Add, % Get("Actions", "RightDrag"), RightDragAction
     Menu, MouseSubMenu, Add, % Get("Actions", "MiddleClick"), MiddleClickAction
     Menu, MouseSubMenu, Add, % Get("Actions", "MiddleDrag"), MiddleDragAction
-    ; Click On Color sub sub-menu...
-    Menu, ClickOnColorSubSubMenu, Add, % Get("Actions", "AtMousePosition"), ClickOnColorAtMousePositionAction
-    Menu, ClickOnColorSubSubMenu, Add, % Get("Actions", "EnterColor"), ClickOnColorEnterColorAction
-    Menu, MouseSubMenu, Add, % Get("Actions", "ClickOnColor"), :ClickOnColorSubSubMenu
+    ; Move to Color sub sub-menu...
+    Menu, MoveToColorSubSubMenu, Add, % Get("Actions", "AtMousePosition"), MoveToColorAtMousePositionAction
+    Menu, MoveToColorSubSubMenu, Add, % Get("Actions", "EnterColor"), MoveToColorEnterColorAction
+    Menu, MouseSubMenu, Add, % Get("Actions", "MoveToColor"), :MoveToColorSubSubMenu
     Menu, ActionsMenu, Add, % Get("Actions", "Mouse"), :MouseSubMenu
 
     ; "Keyboard" sub-menu
@@ -303,7 +303,9 @@ ConfirmColorPick(colorObject){
     restore()
     if(!confirmed)
         return false
+    WinGet, winExe, ProcessName, ahk_id %winId%
     colorObject.pixelColor := StrReplace(color, "0x", "#")
+    colorObject.process := winExe
     return true
 }
 
@@ -375,10 +377,18 @@ MiddleDragAction(){
     actions.push(action)
     ShowActions()
 }
-ClickOnColorAtMousePositionAction(){
+MoveToColorAtMousePositionAction(){
+    action := {name: "MoveToColor"}
+    if(!ConfirmColorPick(action))
+       return
 
+    action.saveName := "{" action.name "}[" action.process "](" action.pixelColor ")"
+    action.displayName := Get("Actions", action.name) " [" action.process " ] (" action.pixelColor ")"
+
+    actions.push(action)
+    ShowActions()
 }
-ClickOnColorEnterColorAction(){
+MoveToColorEnterColorAction(){
 
 }
 
@@ -486,7 +496,7 @@ SetLanguage(newLanguage){
                 continue
             }
             try{
-                Menu, ClickOnColorSubSubMenu, Rename, %currentValue%, %newValue%
+                Menu, MoveToColorSubSubMenu, Rename, %currentValue%, %newValue%
                 continue
             }
             try{
