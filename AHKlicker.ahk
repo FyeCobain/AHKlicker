@@ -98,10 +98,10 @@ ShowMainGui(){
     Menu, MouseSubMenu, Add, % Get("Actions", "RightDrag"), RightDragAction
     Menu, MouseSubMenu, Add, % Get("Actions", "MiddleClick"), MiddleClickAction
     Menu, MouseSubMenu, Add, % Get("Actions", "MiddleDrag"), MiddleDragAction
-    ; Move to Color sub sub-menu...
-    Menu, MoveToColorSubSubMenu, Add, % Get("Actions", "AtMousePosition"), MoveToColorAtMousePositionAction
-    Menu, MoveToColorSubSubMenu, Add, % Get("Actions", "EnterColor"), MoveToColorEnterColorAction
-    Menu, MouseSubMenu, Add, % Get("Actions", "MoveToColor"), :MoveToColorSubSubMenu
+    ; Click on Color sub sub-menu...
+    Menu, ClickOnColorSubSubMenu, Add, % Get("Actions", "AtMousePosition"), ClickOnColorAtMousePositionAction
+    Menu, ClickOnColorSubSubMenu, Add, % Get("Actions", "EnterColor"), ClickOnColorEnterColorAction
+    Menu, MouseSubMenu, Add, % Get("Actions", "ClickOnColor"), :ClickOnColorSubSubMenu
     Menu, ActionsMenu, Add, % Get("Actions", "Mouse"), :MouseSubMenu
 
     ; "Keyboard" sub-menu
@@ -377,8 +377,8 @@ MiddleDragAction(){
     actions.push(action)
     ShowActions()
 }
-MoveToColorAtMousePositionAction(){
-    action := {name: "MoveToColor"}
+ClickOnColorAtMousePositionAction(){
+    action := {name: "ClickOnColor"}
     if(!ConfirmColorPick(action))
        return
 
@@ -388,7 +388,7 @@ MoveToColorAtMousePositionAction(){
     actions.push(action)
     ShowActions()
 }
-MoveToColorEnterColorAction(){
+ClickOnColorEnterColorAction(){
 
 }
 
@@ -496,7 +496,7 @@ SetLanguage(newLanguage){
                 continue
             }
             try{
-                Menu, MoveToColorSubSubMenu, Rename, %currentValue%, %newValue%
+                Menu, ClickOnColorSubSubMenu, Rename, %currentValue%, %newValue%
                 continue
             }
             try{
