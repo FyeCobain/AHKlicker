@@ -321,6 +321,7 @@ LeftClickAction(){
     actions.push(action)
     ShowActions()
 }
+
 LeftDragAction(){
     action := {name: "LeftDrag", button: "LButton"}
     if(!ConfirmDrag(action))
@@ -332,6 +333,7 @@ LeftDragAction(){
     actions.push(action)
     ShowActions()
 }
+
 RightClickAction(){
     action := {name: "RightClick"}
     if(!ConfirmClick(action))
@@ -343,6 +345,7 @@ RightClickAction(){
     actions.push(action)
     ShowActions()
 }
+
 RightDragAction(){
     action := {name: "RightDrag", button: "RButton"}
     if(!ConfirmDrag(action))
@@ -354,6 +357,7 @@ RightDragAction(){
     actions.push(action)
     ShowActions()
 }
+
 MiddleClickAction(){
     action := {name: "MiddleClick"}
     
@@ -366,6 +370,7 @@ MiddleClickAction(){
     actions.push(action)
     ShowActions()
 }
+
 MiddleDragAction(){
     action := {name: "MiddleDrag", button: "MButton"}
     if(!ConfirmDrag(action))
@@ -377,6 +382,7 @@ MiddleDragAction(){
     actions.push(action)
     ShowActions()
 }
+
 ClickOnColorAtMousePositionAction(){
     action := {name: "ClickOnColor"}
     if(!ConfirmColorPick(action))
@@ -388,8 +394,32 @@ ClickOnColorAtMousePositionAction(){
     actions.push(action)
     ShowActions()
 }
-ClickOnColorEnterColorAction(){
 
+ClickOnColorEnterColorAction(){
+    inputW := 300
+    inputH := 125
+    inputX := A_ScreenWidth / 2 - inputW / 2
+    inputY := A_ScreenHeight / 2 - inputH / 2
+    color := ""
+    while(true){
+        InputBox, color, Enter a valid color, Color value (in hex format):, , %inputW%, %inputH%, %inputX%, %inputY%, Locale
+        if ErrorLevel
+            return
+        color := Trim(color, " `t`r`n")
+        if(RegExMatch(color, "^(?:0x|#)?[a-fA-F0-9]{6}$")){
+            color := "#" RegExReplace(color, "(0x|#)")
+            StringUpper, color, color
+            break
+        }
+    }
+    
+    action := {name: "ClickOnColor", process: "", pixelColor: color}
+
+    action.saveName := "{" action.name "}[" action.process "](" action.pixelColor ")"
+    action.displayName := Get("Actions", action.name) " [" action.process " ] (" action.pixelColor ")"
+
+    actions.push(action)
+    ShowActions()
 }
 
 ; Keyboard actions sub-menu
@@ -544,6 +574,7 @@ SetLanguage(newLanguage){
 SetEnglishAction(){
     SetLanguage("en")
 }
+
 SetSpanishAction(){
     SetLanguage("spa")
 }
