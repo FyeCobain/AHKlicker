@@ -418,7 +418,7 @@ ClickOnColorAtMousePositionAction(){
 }
 
 ClickOnColorEnterColorAction(){
-    color := ConfirmInput("Enter a valid color value", "Color value (in hex format):", , , , , , , , , "^(?:0x|#)?[a-fA-F0-9]{6}$")
+    color := ConfirmInput(Get("Dialogs", "EnterAColorValue"), Get("Dialogs", "ColorValue"), , , , , , , , , "^(?:0x|#)?[a-fA-F0-9]{6}$")
     if(!color):
         return
     
