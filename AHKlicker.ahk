@@ -221,7 +221,7 @@ TooltipMessageTimer(){
     ToolTip, %tooltipMessage%
 }
 
-; Wait confirmation or cancelation in the current mouse position...
+; Wait confirmation or cancelation...
 
 ; Confirming click
 ConfirmClick(actionObject){
@@ -307,6 +307,28 @@ ConfirmColorPick(colorObject){
     colorObject.pixelColor := StrReplace(color, "0x", "#")
     colorObject.process := winExe
     return true
+}
+
+; Confirm value input
+ConfirmInput(title, prompt:="", hide:="", width:=300, height:=130, x:=-1, y:=-1, timeout:="", default:="", trimValue:=True, valuePattern:=False){
+    if(x == -1)
+        x := A_ScreenWidth / 2 - width / 2
+    if(y == -1)
+        y := A_ScreenHeight / 2 - height / 2
+
+    while(True){
+        InputBox, value, %title%, %prompt%, %hide%, %width%, %height%, %x%, %y%, Locale, %timeout%, %default%
+        if ErrorLevel
+            return False
+        if(trimValue)
+            value := Trim(value, " `t`r`n")
+        if(value == "")
+            continue
+        if(valuePattern)
+            if(!RegExMatch(value, valuePattern))
+                Continue
+        return value
+    }
 }
 
 ; Mouse actions sub-menu functions
@@ -396,22 +418,12 @@ ClickOnColorAtMousePositionAction(){
 }
 
 ClickOnColorEnterColorAction(){
-    inputW := 300
-    inputH := 125
-    inputX := A_ScreenWidth / 2 - inputW / 2
-    inputY := A_ScreenHeight / 2 - inputH / 2
-    color := ""
-    while(true){
-        InputBox, color, Enter a valid color, Color value (in hex format):, , %inputW%, %inputH%, %inputX%, %inputY%, Locale
-        if ErrorLevel
-            return
-        color := Trim(color, " `t`r`n")
-        if(RegExMatch(color, "^(?:0x|#)?[a-fA-F0-9]{6}$")){
-            color := "#" RegExReplace(color, "(0x|#)")
-            StringUpper, color, color
-            break
-        }
-    }
+    color := ConfirmInput("Enter a valid color value", "Color value (in hex format):", , , , , , , , , "^(?:0x|#)?[a-fA-F0-9]{6}$")
+    if(!color):
+        return
+    
+    color := "#" RegExReplace(color, "(0x|#)")
+    StringUpper, color, color
     
     action := {name: "ClickOnColor", process: "", pixelColor: color}
 
