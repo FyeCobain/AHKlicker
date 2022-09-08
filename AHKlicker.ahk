@@ -310,11 +310,11 @@ ConfirmColorPick(colorObject){
 }
 
 ; Confirm value input
-ConfirmInput(title, prompt:="", hide:="", width:=300, height:=130, x:=-1, y:=-1, timeout:="", default:="", trimValue:=True, valuePattern:=False){
+ConfirmInput(title, prompt:="", hide:="", width:=300, height:=130, x:=-1, y:=-1, timeout:="", default:="", trimValue:=True, requiredPattern:=False){
     if(x == -1)
-        x := A_ScreenWidth / 2 - width / 2
+        x := A_ScreenWidth / 2 - width / 2 ; Centering on X
     if(y == -1)
-        y := A_ScreenHeight / 2 - height / 2
+        y := A_ScreenHeight / 2 - height / 2 ; Centering on Y
 
     while(True){
         InputBox, value, %title%, %prompt%, %hide%, %width%, %height%, %x%, %y%, Locale, %timeout%, %default%
@@ -324,9 +324,9 @@ ConfirmInput(title, prompt:="", hide:="", width:=300, height:=130, x:=-1, y:=-1,
             value := Trim(value, " `t`r`n")
         if(value == "")
             continue
-        if(valuePattern)
-            if(!RegExMatch(value, valuePattern))
-                Continue
+        if(requiredPattern)
+            if(!RegExMatch(value, requiredPattern))
+                continue
         return value
     }
 }
