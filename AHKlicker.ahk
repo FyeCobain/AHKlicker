@@ -195,6 +195,14 @@ CopyRepository(){
 AboutOK(){
     Gui, about:Destroy
 }
+; Show actions list in the GUI
+ShowActions(actionDeleted := false){
+    for key, action in actions
+        GuiControl, main:, action%A_Index%, % A_Index ": " action.displayName
+    if(actionDeleted)
+        Loop, % maxActions - actions.Length()
+            GuiControl, main:, % "action" A_Index + actions.Length()
+}
 
 ; File menu functions
 Start(){
@@ -614,13 +622,4 @@ SetEnglishAction(){
 
 SetSpanishAction(){
     SetLanguage("spa")
-}
-
-; Show actions list in the GUI
-ShowActions(actionDeleted := false){
-    for key, action in actions
-        GuiControl, main:, action%A_Index%, % A_Index ": " action.displayName
-    if(actionDeleted)
-        Loop, % maxActions - actions.Length()
-            GuiControl, main:, % "action" A_Index + actions.Length()
 }
