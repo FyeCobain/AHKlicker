@@ -319,7 +319,7 @@ ConfirmInput(title, prompt:="", hide:="", width:=300, height:=130, x:=-1, y:=-1,
     while(True){
         InputBox, value, %title%, %prompt%, %hide%, %width%, %height%, %x%, %y%, Locale, %timeout%, %default%
         if ErrorLevel
-            return False
+            return ""
         if(trimValue)
             value := Trim(value, " `t`r`n")
         if(value == "")
@@ -329,6 +329,26 @@ ConfirmInput(title, prompt:="", hide:="", width:=300, height:=130, x:=-1, y:=-1,
                 continue
         return value
     }
+}
+
+; Confirm window where the mouse is
+ConfirmWindow(){
+    minimize()
+    tooltipMessage := ""
+    SetTimer, TooltipMessageTimer, 50
+    while(!GetKeyState(okKey) && !GetKeyState(cancelKey)){
+        MouseGetPos, , , winId
+        WinGet, winExe, ProcessName, ahk_id %winId%
+        tooltipMessage := okKey " = " Get("Dialogs", "ThisWindow") " (" winExe ")`n" cancelKey " = " Get("Dialogs", "Cancel")
+        continue
+    }
+    SetTimer, TooltipMessageTimer, Delete
+    ToolTip
+    if(GetKeyState(cancelKey)){
+        restore()
+        return false
+    }
+    return winExe
 }
 
 ; Mouse actions sub-menu functions
@@ -418,14 +438,19 @@ ClickOnColorAtMousePositionAction(){
 }
 
 ClickOnColorEnterColorAction(){
+    windowProcess := ConfirmWindow()
+    if(!windowProcess)
+        return
+
     color := ConfirmInput(Get("Dialogs", "EnterAColorValue"), Get("Dialogs", "ColorValue"), , , , , , , , , "^(?:0x|#)?[a-fA-F0-9]{6}$")
-    if(!color):
+    restore()
+    if(color == "")
         return
     
     color := "#" RegExReplace(color, "(0x|#)")
     StringUpper, color, color
     
-    action := {name: "ClickOnColor", process: "", pixelColor: color}
+    action := {name: "ClickOnColor", process: windowProcess, pixelColor: color}
 
     action.saveName := "{" action.name "}[" action.process "](" action.pixelColor ")"
     action.displayName := Get("Actions", action.name) " [" action.process " ] (" action.pixelColor ")"
