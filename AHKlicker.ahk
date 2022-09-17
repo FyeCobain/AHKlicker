@@ -175,10 +175,10 @@ AboutAction(){
     Gui, about:New
     Gui, -Caption +ToolWindow +Border +AlwaysOnTop
     Gui, Font, s12
-	Gui, Color, e9e9e9
+    Gui, Color, e9e9e9
     Gui, Add, Text, x4 y4, % "AHKlicker " GetConfig("About", "version")
     Gui, Font, c0000FF underline
-	Gui, Add, Text, x4 y36 gGoRepository, % GetConfig("About", "repo")
+    Gui, Add, Text, x4 y36 gGoRepository, % GetConfig("About", "repo")
     Gui, Add, Picture, x312 y32 w30 h30 Icon135 gCopyRepository vcopyRepositoryButton, Shell32.dll
     Gui, Font, s12 norm
     Gui, Add, Button, w80 x135 y70 gAboutOK, % Get("Dialogs", "OK")
