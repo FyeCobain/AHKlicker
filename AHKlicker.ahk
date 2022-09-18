@@ -17,7 +17,6 @@ global profile := GetConfig("GENERAL", "profile")
 global maxActions := 35
 global actions := []
 
-; AUTO-EXECUTE SECTION
 ShowMainGui()
 
 ; FUNCTIONS
@@ -195,6 +194,7 @@ CopyRepository(){
 AboutOK(){
     Gui, about:Destroy
 }
+
 ; Show actions list in the GUI
 ShowActions(actionDeleted := false){
     for key, action in actions
@@ -528,7 +528,7 @@ restore(){
     WinRestore, %title% ahk_exe AutoHotkeyU64.exe
 }
 
-; Configuration menu actions
+; Set a new language
 
 SetLanguage(newLanguage){
     if(language == newLanguage)
@@ -616,9 +616,13 @@ SetLanguage(newLanguage){
     SetConfig("GENERAL", "language", language)
 }
 
+; Set to english
+
 SetEnglishAction(){
     SetLanguage("en")
 }
+
+; Set to spanish
 
 SetSpanishAction(){
     SetLanguage("spa")
