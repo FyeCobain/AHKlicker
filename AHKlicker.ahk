@@ -169,7 +169,7 @@ ShowMainGui(){
     Gui, +resize
     Gui, Show, % "w" guiWidth " h" guiHeight " y" Floor(A_ScreenHeight / 2 - guiHeight / 2 - maxActions), %title%
 }
-mainGuiClose(){
+mainGuiClose(){ ; Action when the main gui is closed
     ExitApp
 }
 
@@ -188,15 +188,15 @@ AboutAction(){
     Gui, Add, Button, w80 x135 y70 gAboutOK, % Get("Dialogs", "OK")
     Gui, Show, w348 h120
 }
-GoRepository(){
+GoRepository(){ ; Open's the repository
     Run, % GetConfig("About", "repo")
     AboutOK()
 }
-CopyRepository(){
+CopyRepository(){ ; Copies the repository
     Clipboard := GetConfig("About", "repo")
     GuiControl, , copyRepositoryButton, *icon303 Shell32.dll
 }
-AboutOK(){
+AboutOK(){ ; Closes de About dialog
     Gui, about:Destroy
 }
 
@@ -210,19 +210,19 @@ ShowActions(actionDeleted := false){
 }
 
 ; File menu functions
-Start(){
+Start(){ ; Start actions
     ExitApp
 }
-Pause(){
+Pause(){ ; Pause actions
     ExitApp
 }
-Stop(){
+Stop(){ ; Stops the actions
     ExitApp
 }
-Restart(){
+Restart(){ ; Restarts the actions
     ExitApp
 }
-Exit(){
+Exit(){ ; Close program
     ExitApp
 }
 
@@ -364,7 +364,9 @@ ConfirmWindow(){
     return winExe
 }
 
-; Mouse actions sub-menu functions
+; MOUSE ACTIONS SUB-MENU FUNCTIONS
+
+; Adds a Left Click
 LeftClickAction(){
     action := {name: "LeftClick"}
     if(!ConfirmClick(action))
@@ -377,6 +379,7 @@ LeftClickAction(){
     ShowActions()
 }
 
+; Adds a Left Button Drag
 LeftDragAction(){
     action := {name: "LeftDrag", button: "LButton"}
     if(!ConfirmDrag(action))
@@ -389,6 +392,7 @@ LeftDragAction(){
     ShowActions()
 }
 
+; Adds a Right Click
 RightClickAction(){
     action := {name: "RightClick"}
     if(!ConfirmClick(action))
@@ -401,6 +405,7 @@ RightClickAction(){
     ShowActions()
 }
 
+; Adds Left Button Drag
 RightDragAction(){
     action := {name: "RightDrag", button: "RButton"}
     if(!ConfirmDrag(action))
@@ -413,6 +418,7 @@ RightDragAction(){
     ShowActions()
 }
 
+; Adds a Middle Button Click
 MiddleClickAction(){
     action := {name: "MiddleClick"}
     
@@ -426,6 +432,7 @@ MiddleClickAction(){
     ShowActions()
 }
 
+; Adds a Middle Button Drag
 MiddleDragAction(){
     action := {name: "MiddleDrag", button: "MButton"}
     if(!ConfirmDrag(action))
@@ -438,6 +445,7 @@ MiddleDragAction(){
     ShowActions()
 }
 
+; Adds a "Click on Color" over the color in the mouse position
 ClickOnColorAtMousePositionAction(){
     action := {name: "ClickOnColor"}
     if(!ConfirmColorPick(action))
@@ -450,6 +458,7 @@ ClickOnColorAtMousePositionAction(){
     ShowActions()
 }
 
+; Adds a "Click on Color" by manully writing a color value
 ClickOnColorEnterColorAction(){
     windowProcess := ConfirmWindow()
     if(!windowProcess)
@@ -499,12 +508,17 @@ RepeatAction(){
 RunCommandAction(){
 
 }
+
+; Picks the color in the mouse position to the clipboard
 PickColorAction(){
     colorObj := {name: "ColorPicker"}
     if(!ConfirmColorPick(colorObj))
        return
 
     Clipboard := colorObj.pixelColor
+    while(ErrorLevel)
+        Clipboard := colorObj.pixelColor
+
     ToolTip, % Get("Tools", "ColorPicked")
     Sleep, 1000
     ToolTip
@@ -533,8 +547,7 @@ restore(){
     WinRestore, %title% ahk_exe AutoHotkeyU64.exe
 }
 
-; Set a new language
-
+; Sets a new language
 SetLanguage(newLanguage){
     if(language == newLanguage)
         return
