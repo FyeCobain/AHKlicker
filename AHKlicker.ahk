@@ -107,7 +107,7 @@ ShowMainGui(){
     Menu, ActionsMenu, Add, % Get("Actions", "Mouse"), :MouseSubMenu
 
     ; "Keyboard" sub-menu
-    Menu, KeyboardSubMenu, Add, % Get("Actions", "Write"), WriteAction
+    Menu, KeyboardSubMenu, Add, % Get("Actions", "Write"), ConfirmTextInput
     Menu, KeyboardSubMenu, Add, % Get("Actions", "PressKey"), PressKeyAction
     Menu, KeyboardSubMenu, Add, % Get("Actions", "SendCommand"), SendCommandAction
     Menu, ActionsMenu, Add, % Get("Actions", "Keyboard"), :KeyboardSubMenu
@@ -344,6 +344,22 @@ ConfirmInput(title, prompt:="", hide:="", width:=300, height:=130, x:=-1, y:=-1,
     }
 }
 
+; Confirm text input
+global textInput
+ConfirmTextInput(actionLabel, actionIndex, menuName){
+    switch menuName{
+        case "KeyboardSubMenu":
+            okCallback := "WriteAction"
+    }
+    Gui, input:New
+    Gui, input:Default
+    Gui, Font, s11
+    Gui, Add, Text, x0 y2, Text to write...
+    Gui, Add, Edit, r8 w350 vtextInput
+    Gui, Add, Button, % "w70 x" 350/2 - 70/2 " g" okCallback, OK
+    Gui, Show, w350 h208
+}
+
 ; Confirm window where the mouse is
 ConfirmWindow(){
     minimize()
@@ -483,7 +499,9 @@ ClickOnColorEnterColorAction(){
 
 ; Keyboard actions sub-menu
 WriteAction(){
-
+    GuiControlGet, text, , textInput
+    MsgBox, Text to write:`n"%text%"
+    Gui, Destroy
 }
 PressKeyAction(){
 
