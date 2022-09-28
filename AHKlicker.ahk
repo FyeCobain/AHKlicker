@@ -13,9 +13,6 @@ global resourcesPath := A_WorkingDir "\resources"
 global language := GetConfig("GENERAL", "language")
 global profile := GetConfig("GENERAL", "profile")
 
-; Available languages
-global languages := ["en", "spa"]
-
 ; Max number of actions and actions objects array
 global maxActions := 35
 global actions := []
@@ -137,9 +134,10 @@ ShowMainGui(){
     ; "Configuration" menu
 
     ; "Language" sub-menu
-    Loop, % languages.Length(){
-        setLanguageFunction := Func("SetLanguage").Bind(languages[A_Index])
-        Menu, LangaugeSubMenu, Add, % Get("Languages", languages[A_Index]), %setLanguageFunction%
+    Loop, Files, %A_WorkingDir%\resources\languages\*.ini
+    {
+        setLanguageFunction := Func("SetLanguage").Bind(StrReplace(A_LoopFileName, "." A_LoopFileExt))
+        Menu, LangaugeSubMenu, Add, % Get("Languages", StrReplace(A_LoopFileName, "." A_LoopFileExt)), %setLanguageFunction%
     }
     Menu, LangaugeSubMenu, Check, % Get("Languages", language)
     Menu, ConfigMenu, Add, % Get("Languages", "Language"), :LangaugeSubMenu
