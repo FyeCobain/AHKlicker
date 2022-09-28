@@ -33,9 +33,10 @@ SetConfig(section, key, value){
 }
 
 ; Gets and returns a value from the current (or the given) language file
-Get(section, key, languageFile := false){
+Get(section, key, languageFile:=false, default:=False){
     languageFile := languageFile ? languageFile : language
-    IniRead, value, %resourcesPath%\languages\%languageFile%.ini, %section%, %key%, [{%key%}]
+    default := default ? default : "{" key "}"
+    IniRead, value, %resourcesPath%\languages\%languageFile%.ini, %section%, %key%, %default%
     return value
 }
 
@@ -199,7 +200,7 @@ AboutOK(){ ; Closes de About dialog
 }
 
 ; Show actions list in the GUI
-ShowActions(actionDeleted := false){
+ShowActions(actionDeleted:=false){
     for key, action in actions
         GuiControl, main:, action%A_Index%, % A_Index ": " action.displayName
     if(actionDeleted)
