@@ -181,10 +181,11 @@ AboutAction(){
     Gui, Color, e9e9e9
     Gui, Add, Text, x4 y4, % "AHKlicker " GetConfig("About", "version")
     Gui, Font, c0000FF underline
-    Gui, Add, Text, x4 y36 gGoRepository, % GetConfig("About", "repo")
+    Gui, Add, Link, x4 y36 gGoRepository, % "<a>" GetConfig("About", "repo") "</a>"
     Gui, Add, Picture, x312 y32 w30 h30 Icon135 gCopyRepository vcopyRepositoryButton, Shell32.dll
     Gui, Font, s12 norm
-    Gui, Add, Button, w80 x135 y70 gAboutOK, % Get("Dialogs", "OK")
+    Gui, Add, Button, w80 x135 y70 gAboutOK Default, % Get("Dialogs", "OK")
+    GuiControl, Focus, Button1
     Gui, Show, w348 h120
 }
 GoRepository(){ ; Open's the repository
