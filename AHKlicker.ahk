@@ -194,7 +194,7 @@ GoRepository(){ ; Open's the repository
 }
 CopyRepository(){ ; Copies the repository
     Clipboard := GetConfig("About", "repo")
-    GuiControl, , copyRepositoryButton, *icon303 Shell32.dll
+    GuiControl, , copyRepositoryButton, *icon296 Shell32.dll
 }
 AboutOK(){ ; Closes de About dialog
     Gui, about:Destroy
