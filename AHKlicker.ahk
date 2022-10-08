@@ -9,9 +9,13 @@ Menu, Tray, Icon, %A_WorkingDir%\resources\images\icon.ico, 1, 1
 global title := "AHKlicker"
 global okKey := "F9"
 global cancelKey := "F10"
-global resourcesPath := A_WorkingDir "\resources"
-global language := GetConfig("GENERAL", "language")
-global profile := GetConfig("GENERAL", "profile")
+global resourcesPath := A_ScriptDir "\resources"
+global language := GetConfig("General", "language")
+if(!FileExist(resourcesPath "\languages\" language ".ini")){
+    language := "en"
+    SetConfig("General", "language", language)
+}
+global profile := GetConfig("General", "profile")
 
 ; Max number of actions and actions objects array
 global maxActions := 35
@@ -35,7 +39,7 @@ SetConfig(section, key, value){
 ; Gets and returns a value from the current (or the given) language file
 Get(section, key, languageFile:=false, default:=False){
     languageFile := languageFile ? languageFile : language
-    default := default ? default : "{" key "}"
+    default := default ? default : key
     IniRead, value, %resourcesPath%\languages\%languageFile%.ini, %section%, %key%, %default%
     return value
 }
@@ -137,8 +141,9 @@ ShowMainGui(){
     ; "Language" sub-menu
     Loop, Files, %A_WorkingDir%\resources\languages\*.ini
     {
-        setLanguageFunction := Func("SetLanguage").Bind(StrReplace(A_LoopFileName, "." A_LoopFileExt))
-        Menu, LangaugeSubMenu, Add, % Get("Languages", StrReplace(A_LoopFileName, "." A_LoopFileExt)), %setLanguageFunction%
+        currentLanguage := StrReplace(A_LoopFileName, "." A_LoopFileExt)
+        setLanguageFunction := Func("SetLanguage").Bind(currentLanguage)
+        Menu, LangaugeSubMenu, Add, % Get("Languages", currentLanguage), %setLanguageFunction%
     }
     Menu, LangaugeSubMenu, Check, % Get("Languages", language)
     Menu, ConfigMenu, Add, % Get("Languages", "Language"), :LangaugeSubMenu
@@ -238,7 +243,7 @@ TooltipMessageTimer(){
 
 ; Confirming click
 ConfirmClick(actionObject){
-    minimize()
+    Minimize()
     tooltipMessage := okKey " = " Get("Actions", actionObject.name) " " Get("Dialogs", "Here") "`n" cancelKey " = " Get("Dialogs", "Cancel")
     SetTimer, TooltipMessageTimer, 50
     while(!GetKeyState(okKey) && !GetKeyState(cancelKey))
@@ -246,13 +251,13 @@ ConfirmClick(actionObject){
     SetTimer, TooltipMessageTimer, Delete
     ToolTip
     if(GetKeyState(cancelKey)){
-        restore()
+        Restore()
         return false
     }
     MouseGetPos, , , winId
     WinActivate, ahk_id %winId%
     MouseGetPos, mX, mY
-    restore()
+    Restore()
     actionObject.x := mX
     actionObject.y := mY
     WinGet, winExe, ProcessName, ahk_id %winId%
@@ -262,7 +267,7 @@ ConfirmClick(actionObject){
 
 ; Confirmig mouse drag
 ConfirmDrag(actionObject){
-    minimize()
+    Minimize()
     tooltipMessage := Get("Actions", actionObject.name) "`n" cancelKey " = " Get("Dialogs", "Cancel")
     SetTimer, TooltipMessageTimer, 50
     dragDone := false
@@ -282,7 +287,7 @@ ConfirmDrag(actionObject){
     SetTimer, TooltipMessageTimer, Delete
     ToolTip
     if(!dragDone){
-        restore()
+        Restore()
         return false
     }
     MsgBox, % 4 + 32, % Get("Dialogs", "Confirmation"), % Get("Dialogs", "DragConfirmation")
@@ -294,7 +299,7 @@ ConfirmDrag(actionObject){
         actionObject.y2 := mY2
         WinGet, winExe, ProcessName, ahk_id %winId1%
         actionObject.process := winExe
-        restore()
+        Restore()
         return true
     }
     else
@@ -303,7 +308,7 @@ ConfirmDrag(actionObject){
 
 ; Confirming color picking
 ConfirmColorPick(colorObject){
-    minimize()
+    Minimize()
     SetTimer, TooltipMessageTimer, 50
     while(!GetKeyState(okKey) && !GetKeyState(cancelKey)){
         MouseGetPos, mX, mY, winId
@@ -313,7 +318,7 @@ ConfirmColorPick(colorObject){
     confirmed := !GetKeyState(cancelKey)
     SetTimer, TooltipMessageTimer, Delete
     ToolTip
-    restore()
+    Restore()
     if(!confirmed)
         return false
     WinGet, winExe, ProcessName, ahk_id %winId%
@@ -362,7 +367,7 @@ ConfirmTextInput(actionLabel, actionIndex, menuName){
 
 ; Confirm window where the mouse is
 ConfirmWindow(){
-    minimize()
+    Minimize()
     tooltipMessage := ""
     SetTimer, TooltipMessageTimer, 50
     while(!GetKeyState(okKey) && !GetKeyState(cancelKey)){
@@ -374,7 +379,7 @@ ConfirmWindow(){
     SetTimer, TooltipMessageTimer, Delete
     ToolTip
     if(GetKeyState(cancelKey)){
-        restore()
+        Restore()
         return false
     }
     return winExe
@@ -481,7 +486,7 @@ ClickOnColorEnterColorAction(){
         return
 
     color := ConfirmInput(Get("Dialogs", "EnterAColorValue"), Get("Dialogs", "ColorValue"), , , , , , , , , "^(?:0x|#)?[a-fA-F0-9]{6}$")
-    restore()
+    Restore()
     if(color == "")
         return
     
@@ -554,13 +559,13 @@ CleanProfileAction(){
 }
 
 ; Minimize the GUI
-minimize(){
+Minimize(){
     WinMinimize, %title% ahk_exe AutoHotkey.exe
     WinMinimize, %title% ahk_exe AutoHotkeyU64.exe
 }
 
 ; Restore the GUI
-restore(){
+Restore(){
     WinRestore, %title% ahk_exe AutoHotkey.exe
     WinRestore, %title% ahk_exe AutoHotkeyU64.exe
 }
@@ -573,6 +578,9 @@ SetLanguage(newLanguage){
     ; Getting all sections names in the current language file
     IniRead, sections, %resourcesPath%\languages\%language%.ini
     sections := StrSplit(sections, "`n")
+
+    ; Unchecking current language
+    Menu, LangaugeSubMenu, UnCheck, % Get("Languages", language)
 
     ; Changing language
     Loop, % sections.Length(){
@@ -590,52 +598,51 @@ SetLanguage(newLanguage){
             newValue := RegExReplace(sectionNewValues[A_Index], "(^[^=]+=)")
 
             ; Changing menu bar items names
-            try{
+            Try{
                 Menu, MainMenuBar, Rename, %currentValue%, %newValue%
                 continue
             }
-            try{
+            Try{
                 Menu, FileMenu, Rename, %currentValue%, %newValue%
                 continue
             }
-            try{
+            Try{
                 Menu, ActionsMenu, Rename, %currentValue%, %newValue%
                 continue
             }
-            try{
+            Try{
                 Menu, MouseSubMenu, Rename, %currentValue%, %newValue%
                 continue
             }
-            try{
+            Try{
                 Menu, ClickOnColorSubSubMenu, Rename, %currentValue%, %newValue%
                 continue
             }
-            try{
+            Try{
                 Menu, KeyboardSubMenu, Rename, %currentValue%, %newValue%
                 continue
             }
-            try{
+            Try{
                 Menu, WaitSubMenu, Rename, %currentValue%, %newValue%
                 continue
             }
-            try{
+            Try{
                 Menu, ProfileMenu, Rename, %currentValue%, %newValue%
                 continue
             }
-            try{
+            Try{
                 Menu, ConfigMenuProfileMenu, Rename, %currentValue%, %newValue%
                 continue
             }
-            try{
+            Try{
                 Menu, ConfigMenu, Rename, %currentValue%, %newValue%
                 continue
             }
-            try{
-                Menu, LangaugeSubMenu, Uncheck, %currentValue%
+            Try{
                 Menu, LangaugeSubMenu, Rename, %currentValue%, %newValue%
                 continue
             }
-            try{
+            Try{
                 Menu, HelpMenu, Rename, %currentValue%, %newValue%
             }
         }
@@ -649,5 +656,5 @@ SetLanguage(newLanguage){
     ; Saving language configuration
     language := newLanguage
     Menu, LangaugeSubMenu, Check, % Get("Languages", language)
-    SetConfig("GENERAL", "language", language)
+    SetConfig("General", "language", language)
 }
