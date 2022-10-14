@@ -385,6 +385,18 @@ ConfirmWindow(){
     return winExe
 }
 
+; Confirm zone selection
+ConfirmZoneSelection(){ ;TO-DO
+    minimize()
+    Gui, zoneWindow:Destroy
+    Gui, zoneWindow:New
+    Gui, zoneWindow:Default
+    Gui, +LastFound +AlwaysOnTop +Resize -MinimizeBox 
+    WinSet, Transparent, 150
+    Gui, Color, FFFFFF
+    Gui, Show, w400 h400, %A_Space%
+}
+
 ; MOUSE ACTIONS SUB-MENU FUNCTIONS
 
 ; Adds a Left Click
@@ -471,6 +483,8 @@ ClickOnColorAtMousePositionAction(){
     action := {name: "ClickOnColor"}
     if(!ConfirmColorPick(action))
        return
+
+    ConfirmZoneSelection() ;TO-DO
 
     action.saveName := "{" action.name "}[" action.process "](" action.pixelColor ")"
     action.displayName := Get("Actions", action.name) " [" action.process " ] (" action.pixelColor ")"
