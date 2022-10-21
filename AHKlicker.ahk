@@ -307,7 +307,7 @@ ConfirmDrag(actionObject){
 }
 
 ; Confirming color picking
-ConfirmColorPick(colorObject){
+ConfirmColorPick(colorObject, restore:=True){
     Minimize()
     SetTimer, TooltipMessageTimer, 50
     while(!GetKeyState(okKey) && !GetKeyState(cancelKey)){
@@ -318,7 +318,8 @@ ConfirmColorPick(colorObject){
     confirmed := !GetKeyState(cancelKey)
     SetTimer, TooltipMessageTimer, Delete
     ToolTip
-    Restore()
+    if(restore)
+        Restore()
     if(!confirmed)
         return false
     WinGet, winExe, ProcessName, ahk_id %winId%
@@ -395,6 +396,15 @@ ConfirmZoneSelection(){ ;TO-DO
     WinSet, Transparent, 150
     Gui, Color, FFFFFF
     Gui, Show, w400 h400, %A_Space%
+
+    SetTimer, TooltipMessageTimer, 50
+    tooltipMessage := okKey " = This Zone" "`n" cancelKey " = " Get("Dialogs", "Cancel")
+    while(!GetKeyState(okKey) && !GetKeyState(cancelKey))
+        continue
+
+    SetTimer, TooltipMessageTimer, Delete
+    ToolTip
+    return !GetKeyState(cancelKey)
 }
 
 ; MOUSE ACTIONS SUB-MENU FUNCTIONS
@@ -481,7 +491,7 @@ MiddleDragAction(){
 ; Adds a "Click on Color" over the color in the mouse position
 ClickOnColorAtMousePositionAction(){
     action := {name: "ClickOnColor"}
-    if(!ConfirmColorPick(action))
+    if(!ConfirmColorPick(action, False))
        return
 
     ConfirmZoneSelection() ;TO-DO
