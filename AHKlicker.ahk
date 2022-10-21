@@ -325,6 +325,7 @@ ConfirmColorPick(colorObject, restore:=True){
     WinGet, winExe, ProcessName, ahk_id %winId%
     colorObject.pixelColor := StrReplace(color, "0x", "#")
     colorObject.process := winExe
+    colorObject.winId := winId
     return true
 }
 
@@ -387,35 +388,45 @@ ConfirmWindow(){
 }
 
 ; Confirm zone selection
-ConfirmZoneSelection(){ ;TO-DO
+ConfirmZoneSelection(winId){ ;TO-DO
     minimize()
     Gui, zoneWindow:Destroy
     Gui, zoneWindow:New
     Gui, zoneWindow:Default
-    Gui, +LastFound +AlwaysOnTop +Resize -MinimizeBox 
+    Gui, +LastFound +AlwaysOnTop +Resize -MinimizeBox +ToolWindow
     WinSet, Transparent, 150
     Gui, Color, FFFFFF
-    Gui, Show, w400 h400, %A_Space%
+    Gui, Show, w400 h400, % Get("Dialogs", "SelectSearchZone")
 
     SetTimer, TooltipMessageTimer, 50
     tooltipMessage := okKey " = " Get("Dialogs", "SetSearchZone") "`n" cancelKey " = " Get("Dialogs", "Cancel")
     while(!GetKeyState(okKey) && !GetKeyState(cancelKey))
-        continue
+        if(!WinExist("ahk_id " winId) || !WinExist(Get("Dialogs", "SelectSearchZone") " ahk_exe AutoHotkey.exe"))
+            break
 
+    confirmed := GetKeyState(okKey)
     SetTimer, TooltipMessageTimer, Delete
     ToolTip
-
-    if(GetKeyState(cancelKey)){
+    if(!confirmed){
         Gui, zoneWindow:Destroy
         Restore()
+        return False
     }
 
     Gui, zoneWindow:+LastFound
-    WinGetPos winX, winY, winW, winH
+    WinGetPos, zoneX, zoneY, zoneW, zoneH
     Gui, zoneWindow:Destroy
+
+    WinGet, minMax, MinMax, ahk_id %winId%
+    while(minMax == -1){
+        WinRestore, ahk_id %winId%
+        WinGet, minMax, MinMax, ahk_id %winId%
+    }
+
+    WinGetPos, winX, winY, winW, winH, ahk_id %winId%
     Restore()
 
-    MsgBox, % To-Do
+    MsgBox, %zoneX% => %winX%
 
     return True
 }
@@ -509,7 +520,12 @@ ClickOnColorAtMousePositionAction(){
         return
     }
 
-    ConfirmZoneSelection() ;TO-DO
+    if(!searchZone := ConfirmZoneSelection(action.winId)){
+        Restore()        
+        return
+    }
+
+    Restore()
 
     action.saveName := "{" action.name "}[" action.process "](" action.pixelColor ")"
     action.displayName := Get("Actions", action.name) " [" action.process " ] (" action.pixelColor ")"
@@ -605,8 +621,8 @@ Minimize(){
 
 ; Restore the GUI
 Restore(){
-    WinRestore, %title% ahk_exe AutoHotkey.exe
-    WinRestore, %title% ahk_exe AutoHotkeyU64.exe
+    WinActivate, %title% ahk_exe AutoHotkey.exe
+    WinActivate, %title% ahk_exe AutoHotkeyU64.exe
 }
 
 ; Sets a new language
