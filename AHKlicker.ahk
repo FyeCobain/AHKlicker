@@ -398,13 +398,26 @@ ConfirmZoneSelection(){ ;TO-DO
     Gui, Show, w400 h400, %A_Space%
 
     SetTimer, TooltipMessageTimer, 50
-    tooltipMessage := okKey " = This Zone" "`n" cancelKey " = " Get("Dialogs", "Cancel")
+    tooltipMessage := okKey " = " Get("Dialogs", "SetSearchZone") "`n" cancelKey " = " Get("Dialogs", "Cancel")
     while(!GetKeyState(okKey) && !GetKeyState(cancelKey))
         continue
 
     SetTimer, TooltipMessageTimer, Delete
     ToolTip
-    return !GetKeyState(cancelKey)
+
+    if(GetKeyState(cancelKey)){
+        Gui, zoneWindow:Destroy
+        Restore()
+    }
+
+    Gui, zoneWindow:+LastFound
+    WinGetPos winX, winY, winW, winH
+    Gui, zoneWindow:Destroy
+    Restore()
+
+    MsgBox, % To-Do
+
+    return True
 }
 
 ; MOUSE ACTIONS SUB-MENU FUNCTIONS
@@ -491,8 +504,10 @@ MiddleDragAction(){
 ; Adds a "Click on Color" over the color in the mouse position
 ClickOnColorAtMousePositionAction(){
     action := {name: "ClickOnColor"}
-    if(!ConfirmColorPick(action, False))
-       return
+    if(!ConfirmColorPick(action, False)){
+        Restore()
+        return
+    }
 
     ConfirmZoneSelection() ;TO-DO
 
