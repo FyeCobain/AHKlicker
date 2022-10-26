@@ -388,7 +388,7 @@ ConfirmWindow(){
 }
 
 ; Confirm zone selection
-ConfirmZoneSelection(winId){ ;TO-DO
+ConfirmZoneSelection(winId){ ;TO_DO
     minimize()
     Gui, zoneWindow:Destroy
     Gui, zoneWindow:New
@@ -396,7 +396,11 @@ ConfirmZoneSelection(winId){ ;TO-DO
     Gui, +LastFound +AlwaysOnTop +Resize -MinimizeBox +ToolWindow
     WinSet, Transparent, 150
     Gui, Color, FFFFFF
-    Gui, Show, w400 h400, % Get("Dialogs", "SelectSearchZone")
+    CoordMode, Mouse, Screen
+    MouseGetPos, mX, mY
+    CoordMode, Mouse, Window
+    WinGetPos, winX, winY, winW, winH, ahk_id %winId%
+    Gui, Show, % "w400 h300 x" mX - 200 " y" mY, % Get("Dialogs", "SelectSearchZone")
 
     SetTimer, TooltipMessageTimer, 50
     tooltipMessage := okKey " = " Get("Dialogs", "SetSearchZone") "`n" cancelKey " = " Get("Dialogs", "Cancel")
@@ -513,7 +517,7 @@ MiddleDragAction(){
 }
 
 ; Adds a "Click on Color" over the color in the mouse position
-ClickOnColorAtMousePositionAction(){
+ClickOnColorAtMousePositionAction(){ ;TO_DO
     action := {name: "ClickOnColor"}
     if(!ConfirmColorPick(action, False)){
         Restore()
