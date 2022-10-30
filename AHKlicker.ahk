@@ -400,7 +400,7 @@ ConfirmZoneSelection(winId){ ;TO-DO
     MouseGetPos, mX, mY
     CoordMode, Mouse, Window
     WinGetPos, winX, winY, winW, winH, ahk_id %winId%
-    Gui, Show, % "w400 h300 x" mX - 200 " y" mY, % Get("Dialogs", "SelectSearchZone")
+    Gui, Show, % "w400 h300 x" mX - 200 " y" mY - 12, % Get("Dialogs", "SelectSearchZone")
 
     SetTimer, TooltipMessageTimer, 50
     tooltipMessage := okKey " = " Get("Dialogs", "SetSearchZone") "`n" cancelKey " = " Get("Dialogs", "Cancel")
