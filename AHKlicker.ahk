@@ -388,7 +388,7 @@ ConfirmWindow(){
 }
 
 ; Confirm zone selection
-ConfirmZoneSelection(winId){ ;TO_DO
+ConfirmZoneSelection(winId){ ;TO-DO
     minimize()
     Gui, zoneWindow:Destroy
     Gui, zoneWindow:New
@@ -517,7 +517,7 @@ MiddleDragAction(){
 }
 
 ; Adds a "Click on Color" over the color in the mouse position
-ClickOnColorAtMousePositionAction(){ ;TO_DO
+ClickOnColorAtMousePositionAction(){ ;TO-DO
     action := {name: "ClickOnColor"}
     if(!ConfirmColorPick(action, False)){
         Restore()
