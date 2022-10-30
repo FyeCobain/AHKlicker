@@ -430,7 +430,7 @@ ConfirmZoneSelection(winId){ ;TO-DO
     WinGetPos, winX, winY, winW, winH, ahk_id %winId%
     Restore()
 
-    MsgBox, %zoneX% => %winX%
+    MsgBox, Window: %winX%`, %winY%`n`n Zone: %zoneX%`, %zoneY%
 
     return True
 }
