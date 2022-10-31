@@ -394,7 +394,7 @@ ConfirmZoneSelection(winId){ ;TO-DO
     Gui, zoneWindow:New
     Gui, zoneWindow:Default
     Gui, +LastFound +AlwaysOnTop +Resize -MinimizeBox +ToolWindow
-    WinSet, Transparent, 150
+    WinSet, Transparent, 200
     Gui, Color, FFFFFF
     CoordMode, Mouse, Screen
     MouseGetPos, mX, mY
