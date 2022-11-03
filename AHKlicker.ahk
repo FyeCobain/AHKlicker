@@ -7,6 +7,8 @@ Menu, Tray, Icon, %A_WorkingDir%\resources\images\icon.ico, 1, 1
 
 ; GLOBAL VARIABLES
 global title := "AHKlicker"
+global scriptExe
+SplitPath, A_AhkPath, scriptExe
 global okKey := "F9"
 global cancelKey := "F10"
 global resourcesPath := A_ScriptDir "\resources"
@@ -405,7 +407,7 @@ ConfirmZoneSelection(winId){ ;TO-DO
     SetTimer, TooltipMessageTimer, 50
     tooltipMessage := okKey " = " Get("Dialogs", "SetSearchZone") "`n" cancelKey " = " Get("Dialogs", "Cancel")
     while(!GetKeyState(okKey) && !GetKeyState(cancelKey))
-        if(!WinExist("ahk_id " winId) || !WinExist(Get("Dialogs", "SelectSearchZone") " ahk_exe AutoHotkey.exe"))
+        if(!WinExist("ahk_id " winId) || !WinExist(Get("Dialogs", "SelectSearchZone") " ahk_exe " scriptExe))
             break
 
     confirmed := GetKeyState(okKey)
@@ -619,12 +621,12 @@ CleanProfileAction(){
 
 ; Minimize the GUI
 Minimize(){
-    WinMinimize, %title% ahk_exe AutoHotkey.exe
+    WinMinimize, %title% ahk_exe %scriptExe%
 }
 
 ; Restore the GUI
 Restore(){
-    WinActivate, %title% ahk_exe AutoHotkey.exe
+    WinActivate, %title% ahk_exe %scriptExe%
 }
 
 ; Sets a new language
