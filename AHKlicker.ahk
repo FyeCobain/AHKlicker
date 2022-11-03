@@ -620,13 +620,11 @@ CleanProfileAction(){
 ; Minimize the GUI
 Minimize(){
     WinMinimize, %title% ahk_exe AutoHotkey.exe
-    WinMinimize, %title% ahk_exe AutoHotkeyU64.exe
 }
 
 ; Restore the GUI
 Restore(){
     WinActivate, %title% ahk_exe AutoHotkey.exe
-    WinActivate, %title% ahk_exe AutoHotkeyU64.exe
 }
 
 ; Sets a new language
