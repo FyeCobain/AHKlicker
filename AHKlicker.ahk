@@ -6,7 +6,7 @@ Menu, Tray, Tip, AHKlicker
 Menu, Tray, Icon, %A_WorkingDir%\resources\images\icon.ico, 1, 1
 
 ; GLOBAL VARIABLES
-global title := "AHKlicker"
+global mainGUITitle := "AHKlicker"
 global scriptExe
 SplitPath, A_AhkPath, scriptExe
 global okKey := "F9"
@@ -173,7 +173,7 @@ ShowMainGui(){
     
     ; Showing main GUI
     Gui, +resize
-    Gui, Show, % "w" guiWidth " h" guiHeight " y" Floor(A_ScreenHeight / 2 - guiHeight / 2 - maxActions), %title%
+    Gui, Show, % "w" guiWidth " h" guiHeight " y" Floor(A_ScreenHeight / 2 - guiHeight / 2 - maxActions), %mainGUITitle%
 }
 mainGuiClose(){ ; Action when the main gui is closed
     ExitApp
@@ -332,14 +332,14 @@ ConfirmColorPick(colorObject, restore:=True){
 }
 
 ; Confirm value input
-ConfirmInput(title, prompt:="", hide:="", width:=300, height:=130, x:=-1, y:=-1, timeout:="", default:="", trimValue:=True, requiredPattern:=False){
+ConfirmInput(mainGUITitle, prompt:="", hide:="", width:=300, height:=130, x:=-1, y:=-1, timeout:="", default:="", trimValue:=True, requiredPattern:=False){
     if(x == -1)
         x := A_ScreenWidth / 2 - width / 2 ; Centering on X
     if(y == -1)
         y := A_ScreenHeight / 2 - height / 2 ; Centering on Y
 
     while(True){
-        InputBox, value, %title%, %prompt%, %hide%, %width%, %height%, %x%, %y%, Locale, %timeout%, %default%
+        InputBox, value, %mainGUITitle%, %prompt%, %hide%, %width%, %height%, %x%, %y%, Locale, %timeout%, %default%
         if ErrorLevel
             return ""
         if(trimValue)
@@ -621,12 +621,12 @@ CleanProfileAction(){
 
 ; Minimize the GUI
 Minimize(){
-    WinMinimize, %title% ahk_exe %scriptExe%
+    WinMinimize, %mainGUITitle% ahk_exe %scriptExe%
 }
 
 ; Restore the GUI
 Restore(){
-    WinActivate, %title% ahk_exe %scriptExe%
+    WinActivate, %mainGUITitle% ahk_exe %scriptExe%
 }
 
 ; Sets a new language
