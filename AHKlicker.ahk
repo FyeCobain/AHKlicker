@@ -428,10 +428,9 @@ ConfirmZoneSelection(winId){ ;TO-DO
         WinRestore, ahk_id %winId%
         WinGet, minMax, MinMax, ahk_id %winId%
     }
-
     WinGetPos, winX, winY, winW, winH, ahk_id %winId%
 
-    MsgBox, Window: %winX%`, %winY% (%winW%x%winH%)`n`n Zone: %zoneX%`, %zoneY% (%zoneW%x%zoneH%)
+    MsgBox, =TO-DO=`n`nWindow: %winX%`, %winY% (%winW%x%winH%)`n`n Zone: %zoneX%`, %zoneY% (%zoneW%x%zoneH%)
 
     return True
 }
