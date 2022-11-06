@@ -431,7 +431,7 @@ ConfirmZoneSelection(winId){ ;TO-DO
 
     WinGetPos, winX, winY, winW, winH, ahk_id %winId%
 
-    MsgBox, Window: %winX%`, %winY%`n`n Zone: %zoneX%`, %zoneY%
+    MsgBox, Window: %winX%`, %winY% (%winW%x%winH%)`n`n Zone: %zoneX%`, %zoneY% (%zoneW%x%zoneH%)
 
     return True
 }
