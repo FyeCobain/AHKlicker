@@ -386,7 +386,7 @@ ConfirmWindow(){
         Restore()
         return false
     }
-    return winExe
+    return {id: winId, process: winExe}
 }
 
 ; Confirm zone selection
@@ -430,7 +430,6 @@ ConfirmZoneSelection(winId){ ;TO-DO
     }
 
     WinGetPos, winX, winY, winW, winH, ahk_id %winId%
-    Restore()
 
     MsgBox, Window: %winX%`, %winY%`n`n Zone: %zoneX%`, %zoneY%
 
@@ -542,9 +541,14 @@ ClickOnColorAtMousePositionAction(){ ;TO-DO
 
 ; Adds a "Click on Color" by manully writing a color value
 ClickOnColorEnterColorAction(){
-    windowProcess := ConfirmWindow()
-    if(!windowProcess)
+    window := ConfirmWindow()
+    if(!window)
         return
+
+    if(!searchZone := ConfirmZoneSelection(window.id)){
+        Restore()        
+        return
+    }
 
     color := ConfirmInput(Get("Dialogs", "EnterAColorValue"), Get("Dialogs", "ColorValue"), , , , , , , , , "^(?:0x|#)?[a-fA-F0-9]{6}$")
     Restore()
@@ -554,7 +558,7 @@ ClickOnColorEnterColorAction(){
     color := "#" RegExReplace(color, "(0x|#)")
     StringUpper, color, color
     
-    action := {name: "ClickOnColor", process: windowProcess, pixelColor: color}
+    action := {name: "ClickOnColor", process: window.process, pixelColor: color}
 
     action.saveName := "{" action.name "}[" action.process "](" action.pixelColor ")"
     action.displayName := Get("Actions", action.name) " [" action.process " ] (" action.pixelColor ")"
