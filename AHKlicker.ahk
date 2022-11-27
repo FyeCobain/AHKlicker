@@ -178,7 +178,7 @@ ShowActions(actionDeleted:=false){
         GuiControl, main:, static%A_Index%, % A_Index ": " action.displayName
     if(actionDeleted)
         Loop, % maxActions - actions.Length()
-            GuiControl, main:, % "action" A_Index + actions.Length()
+            GuiControl, main:, % "static" A_Index + actions.Length()
 }
 
 ; File menu functions
