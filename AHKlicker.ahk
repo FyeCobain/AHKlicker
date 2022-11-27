@@ -47,41 +47,6 @@ Get(section, key, languageFile:=false, default:=False){
 }
 
 ; Shows the main GUI
-global action1
-global action2
-global action3
-global action4
-global action5
-global action6
-global action7
-global action8
-global action9
-global action10
-global action11
-global action12
-global action13
-global action14
-global action15
-global action16
-global action17
-global action18
-global action19
-global action20
-global action21
-global action22
-global action23
-global action24
-global action25
-global action26
-global action27
-global action28
-global action29
-global action30
-global action31
-global action32
-global action33
-global action34
-global action35
 ShowMainGui(){
     ; Creating main GUI
     Gui, main:New
@@ -163,11 +128,11 @@ ShowMainGui(){
     guiWidth := 400
     guiHeight := 16 * maxActions
 
-    ; Adding empty texts to the GUI
+    ; Adding empty actions to the GUI
     Gui, Font, s11
     y := 0
     Loop, %maxActions%{
-        Gui, Add, Text, x2 y%y% w%guiWidth% vaction%A_Index%
+        Gui, Add, Text, x2 y%y% w%guiWidth%
         y += 16
     }
     
@@ -210,7 +175,7 @@ AboutOK(){ ; Closes de About dialog
 ; Show actions list in the GUI
 ShowActions(actionDeleted:=false){
     for key, action in actions
-        GuiControl, main:, action%A_Index%, % A_Index ": " action.displayName
+        GuiControl, main:, static%A_Index%, % A_Index ": " action.displayName
     if(actionDeleted)
         Loop, % maxActions - actions.Length()
             GuiControl, main:, % "action" A_Index + actions.Length()
