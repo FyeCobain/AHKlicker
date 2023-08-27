@@ -1,4 +1,4 @@
-# `AHKlicker (Deprecated)`
+# `AHKlicker (Deprecated / Cancelled)`
 
 > **ATTENTION: This script will be completely redone with [AutoHotkey v2](https://www.autohotkey.com/boards/viewtopic.php?f=24&t=112989) (currently v1.1)**
 
